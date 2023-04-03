@@ -9,10 +9,10 @@ ____________________________________________
 <ul>
     <li>Java 17</li>
     <li>Postgresql 14</li>
+    <li>Spring Boot 2.7.3</li>
     <li>Hibernate 5.6.11</li>
     <li>Lombok 1.18.22</li>
     <li>Bootstrap 5.2.3</li>
-    <li>Spring Boot 2.7.6</li>
     <li>Liquibase 4.15.0</li>
     <li>Checkstyle 8.42</li>
     <li>Junit5</li>
@@ -29,16 +29,25 @@ ____________________________________________
 ____________________________________________
 <h3>Взаимодействие с приложением:</h3>
 <p>Главная страница</p>
-<img src="/src/main/resources/static/img/readme/main.png" title="Main page"/>
+<img src="/src/main/resources/static/img/readme/screenshots/home.png" title="Home page"/>
 <br>
-<p>Страница регистрации нового пользователя</p>
-<img src="/src/main/resources/static/img/readme/register.png" title="New user registration page"/>
+<p>Все задачи</p>
+<img src="/src/main/resources/static/img/readme/screenshots/all_tasks.png" title="All tasks page"/>
 <br>
-<p>Ошибка регистрации пользователя</p>
-<img src="/src/main/resources/static/img/readme/register_error.png" title="Error"/>
+<p>Выполненные задачи</p>
+<img src="/src/main/resources/static/img/readme/screenshots/completed_tasks.png" title="Completed tasks page"/>
 <br>
-<p>Список фильмов в кинотеатре</p>
-<img src="/src/main/resources/static/img/readme/films.png" title="Films page"/>
+<p>Новые задачи</p>
+<img src="/src/main/resources/static/img/readme/screenshots/new_tasks.png" title="New tasks page"/>
+<br>
+<p>Создать задачу</p>
+<img src="/src/main/resources/static/img/readme/screenshots/add_task.png" title="Add new task page"/>
+<br>
+<p>Детальная страница задачи</p>
+<img src="/src/main/resources/static/img/readme/screenshots/task_detailed_info.png" title="Task info"/>
+<br>
+<p>Отредактировать задачу</p>
+<img src="/src/main/resources/static/img/readme/screenshots/task_edit.png" title="Task edit page"/>
 <br>
 
 ____________________________________________
