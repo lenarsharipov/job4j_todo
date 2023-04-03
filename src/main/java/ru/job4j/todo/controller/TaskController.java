@@ -19,12 +19,15 @@ import ru.job4j.todo.model.Task;
 @RequestMapping("/tasks")
 @AllArgsConstructor
 public class TaskController {
+    private static final String NOT_FOUND_MESSAGE = """
+                                                    Задача с указанными идентификатором не найдена.
+                                                    """;
 
     private final TaskService taskService;
 
     /**
      * Вывести страницу со всеми задачами.
-     * @param model модель
+     * @param model модель.
      * @return tasks/list.
      */
     @GetMapping()
@@ -36,7 +39,7 @@ public class TaskController {
     /**
      * Вывести страницу с завершенными задачами.
      * @param model модель.
-     * @return tasks/completed
+     * @return tasks/completed.
      */
     @GetMapping("/completed")
     public String getCompleted(Model model) {
@@ -68,7 +71,7 @@ public class TaskController {
      * Создать вакансию и перейти на страницу /tasks.
      * @param model модель.
      * @param task создаваемая задача.
-     * @return "redirect:/tasks"
+     * @return "redirect:/tasks".
      */
     @PostMapping("/create")
     public String create(@ModelAttribute Task task, Model model) {
@@ -91,7 +94,7 @@ public class TaskController {
     public String getById(@PathVariable int id, Model model) {
         var taskOptional = taskService.findById(id);
         if (taskOptional.isEmpty()) {
-            model.addAttribute("message", "Задача с указанными идентификатором не найдена.");
+            model.addAttribute("message", NOT_FOUND_MESSAGE);
             return "errors/404";
         }
         model.addAttribute("task", taskOptional.get());
@@ -106,26 +109,25 @@ public class TaskController {
      */
     @GetMapping("/delete/{id}")
     public String delete(@PathVariable int id, Model model) {
-        try {
-            taskService.delete(id);
-            return "redirect:/tasks";
-        } catch (Exception exception) {
-            model.addAttribute("message", exception.getMessage());
+        var isDeleted = taskService.delete(id);
+        if (!isDeleted) {
+            model.addAttribute("message", NOT_FOUND_MESSAGE);
             return "errors/404";
         }
+        return "redirect:/tasks";
     }
 
     /**
-     * Перейти на страницу задачи, которая будет редактироваться.
+     * Перейти на страницу редактирования задачи, которая будет отредактирована.
      * @param id ID.
      * @param model модель.
-     * @return errors/404 или tasks/edit
+     * @return errors/404 или tasks/edit.
      */
     @GetMapping("/edit/{id}")
     public String getEditPage(@PathVariable int id, Model model) {
         var taskOptional = taskService.findById(id);
         if (taskOptional.isEmpty()) {
-            model.addAttribute("message", "Задача с указанными идентификатором не найдена.");
+            model.addAttribute("message", NOT_FOUND_MESSAGE);
             return "errors/404";
         }
         model.addAttribute("task", taskOptional.get());
@@ -145,7 +147,7 @@ public class TaskController {
         try {
             var isUpdated = taskService.update(task);
             if (!isUpdated) {
-                model.addAttribute("message", "Задача с указанным идентификатором не найдена");
+                model.addAttribute("message", NOT_FOUND_MESSAGE);
                 return "errors/404";
             }
             return "redirect:/tasks";
@@ -166,7 +168,7 @@ public class TaskController {
         try {
             var isUpdated = taskService.updateStatus(id);
             if (!isUpdated) {
-                model.addAttribute("message", "Задача с указанным идентификатором не найдена");
+                model.addAttribute("message", NOT_FOUND_MESSAGE);
                 return "errors/404";
             }
             return "redirect:/tasks";
