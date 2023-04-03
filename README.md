@@ -30,12 +30,10 @@ Java 17, Maven 3.8.7, Postgresql 14
 ____________________________________________
 <h3>Запуск проекта:</h3>
 <ol>
-    <li>Создать базу данных <b>todo</b>:</li>
-        <pre>
-            create database todo;
-        </pre>
+    <li>Создать базу данных <b>todo</b>. Пользователь <b>postgres</b> c паролем <b>password</b>:</li>
+    <pre>create database todo;</pre>
     <li>Скачать zip-архив программы:</li>
-        <pre><img src="/src/main/resources/static/img/readme/screenshots/zip_archive_git.png" title="Download Zip-archive"/></pre>
+    <pre><img src="/src/main/resources/static/img/readme/screenshots/zip_archive_git.png" title="Download Zip-archive"/></pre>
     <li>Распакуйте архив, откройте в качестве проекта папку в <b>Intellij Idea</b></li>
     <li>Во вкладке <b>Maven</b> запустите поочередно команды <b>clean, test</b></li>
     <li>Откройте класс <b>Main.class</b> и запустите его.</li>
