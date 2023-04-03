@@ -37,8 +37,8 @@ public class SimpleTaskService implements TaskService {
     }
 
     @Override
-    public List<Task> findAllCompleted() {
-        return taskStore.findAllCompleted();
+    public List<Task> findAllCompleted(boolean flag) {
+        return taskStore.findAllCompleted(flag);
     }
 
     @Override

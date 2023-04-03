@@ -5,7 +5,7 @@ import org.hibernate.SessionFactory;
 import org.springframework.stereotype.Repository;
 import ru.job4j.todo.model.Task;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -23,6 +23,7 @@ public class TaskStore {
      * Объект конфигуратор SessionFactory.
      */
     private final SessionFactory sf;
+    private static final int DAYS_RANGE = 1;
 
     /**
      * Добавить новую заявку в БД.
@@ -113,13 +114,15 @@ public class TaskStore {
      * Вывести список всех завершенных задач.
      * @return список завершенных задач.
      */
-    public List<Task> findAllCompleted() {
+    public List<Task> findAllCompleted(boolean done) {
         List<Task> result = Collections.emptyList();
         var session = sf.openSession();
         try {
             session.beginTransaction();
             result = session.createQuery(
-                    "FROM Task WHERE done = true ORDER BY id ASC", Task.class).list();
+                    "FROM Task WHERE done = :fDone ORDER BY id ASC", Task.class)
+                    .setParameter("fDone", done)
+                    .list();
             session.getTransaction().commit();
         } catch (Exception e) {
             session.getTransaction().rollback();
@@ -139,8 +142,8 @@ public class TaskStore {
         try {
             session.beginTransaction();
             result = session.createQuery(
-                    "FROM Task WHERE EXTRACT(DOY FROM created) = :fDoy ORDER BY id ASC", Task.class)
-                    .setParameter("fDoy", LocalDate.now().getDayOfYear())
+                    "FROM Task WHERE created >= :fStart ORDER BY id ASC", Task.class)
+                    .setParameter("fStart", LocalDateTime.now().minusDays(DAYS_RANGE))
                     .list();
             session.getTransaction().commit();
         } catch (Exception e) {

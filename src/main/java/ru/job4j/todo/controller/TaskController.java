@@ -22,6 +22,7 @@ public class TaskController {
     private static final String NOT_FOUND_MESSAGE = """
                                                     Задача с указанными идентификатором не найдена.
                                                     """;
+    private static final boolean FLAG = true;
 
     private final TaskService taskService;
 
@@ -43,7 +44,7 @@ public class TaskController {
      */
     @GetMapping("/completed")
     public String getCompleted(Model model) {
-        model.addAttribute("tasks", taskService.findAllCompleted());
+        model.addAttribute("tasks", taskService.findAllCompleted(FLAG));
         return "tasks/completed";
     }
 
@@ -75,13 +76,12 @@ public class TaskController {
      */
     @PostMapping("/create")
     public String create(@ModelAttribute Task task, Model model) {
-        try {
-            taskService.save(task);
-            return "redirect:/tasks";
-        } catch (Exception exception) {
-            model.addAttribute("message", exception.getMessage());
+        taskService.save(task);
+        if (task == null) {
+            model.addAttribute("message", "Задача с указанным идентификатором не сохранена.");
             return "errors/404";
         }
+        return "redirect:/tasks";
     }
 
     /**
@@ -144,17 +144,12 @@ public class TaskController {
     @PostMapping("/edit/{id}")
     public String update(@PathVariable int id, @ModelAttribute Task task, Model model) {
         task.setId(id);
-        try {
-            var isUpdated = taskService.update(task);
-            if (!isUpdated) {
-                model.addAttribute("message", NOT_FOUND_MESSAGE);
-                return "errors/404";
-            }
-            return "redirect:/tasks";
-        } catch (Exception exception) {
-            model.addAttribute("message", exception.getMessage());
+        var isUpdated = taskService.update(task);
+        if (!isUpdated) {
+            model.addAttribute("message", NOT_FOUND_MESSAGE);
             return "errors/404";
         }
+        return "redirect:/tasks";
     }
 
     /**
@@ -165,17 +160,12 @@ public class TaskController {
      */
     @GetMapping("/complete/{id}")
     public String updateStatus(@PathVariable int id, Model model) {
-        try {
-            var isUpdated = taskService.updateStatus(id);
-            if (!isUpdated) {
-                model.addAttribute("message", NOT_FOUND_MESSAGE);
-                return "errors/404";
-            }
-            return "redirect:/tasks";
-        } catch (Exception exception) {
-            model.addAttribute("message", exception.getMessage());
+        var isUpdated = taskService.updateStatus(id);
+        if (!isUpdated) {
+            model.addAttribute("message", NOT_FOUND_MESSAGE);
             return "errors/404";
         }
+        return "redirect:/tasks";
     }
 
 }

@@ -74,7 +74,7 @@ class TaskControllerTest {
     @Test
     void whenRequestCompletedTaskListThenGetPageWithTasksOrderedByIdAsc() {
         var expectedTasks = List.of(tasks.get(1));
-        when(taskService.findAllCompleted()).thenReturn(expectedTasks);
+        when(taskService.findAllCompleted(true)).thenReturn(expectedTasks);
 
         var model = new ConcurrentModel();
         var view = taskController.getCompleted(model);
@@ -130,23 +130,6 @@ class TaskControllerTest {
 
         assertThat(view).isEqualTo("redirect:/tasks");
         assertThat(actualTask).isEqualTo(task);
-    }
-
-    /**
-     * Mock-test create().
-     * Вернуть страницу об ошибке с сообщением при исключении во время создания новой заявки.
-     */
-    @Test
-    void whenSaveTaskThenThrownExceptionThenGetErrorPageWithMessage() {
-        var expectedException = new RuntimeException("Failed to add new task");
-        when(taskService.save(any())).thenThrow(expectedException);
-
-        var model = new ConcurrentModel();
-        var view = taskController.create(any(), model);
-        var actualExceptionMessage = model.getAttribute("message");
-
-        assertThat(view).isEqualTo("errors/404");
-        assertThat(actualExceptionMessage).isEqualTo(expectedException.getMessage());
     }
 
     /**
@@ -303,24 +286,6 @@ class TaskControllerTest {
     }
 
     /**
-     * Mock-test update().
-     * Обработать выброшенный exception и выдать страницу ошибки с сообщением.
-     */
-    @Test
-    void whenUpdateTaskThenThrownExceptionAndGetErrorPageWithMessage() {
-        var expectedException = new RuntimeException("Not found");
-        var id = 0;
-        when(taskService.update(any())).thenThrow(expectedException);
-
-        var model = new ConcurrentModel();
-        var view = taskController.update(id, new Task(), model);
-        var actualExceptionMessage = model.getAttribute("message");
-
-        assertThat(view).isEqualTo("errors/404");
-        assertThat(actualExceptionMessage).isEqualTo(expectedException.getMessage());
-    }
-
-    /**
      * Mock-test updateStatus().
      * Вернуть страницу tasks, при успешном обновлении статуса задачи с "В процессе" на "Выполнено.
      */
@@ -355,24 +320,6 @@ class TaskControllerTest {
 
         assertThat(view).isEqualTo("errors/404");
         assertThat(actualErrorMessage).isEqualTo(expectedErrorMessage);
-    }
-
-    /**
-     * Mock-test update().
-     * Обработать выброшенный exception и выдать страницу ошибки с сообщением.
-     */
-    @Test
-    void whenUpdateTaskThenThrownExceptionAndGetErrorPageWithMessage1() {
-        var expectedException = new RuntimeException("Not found");
-        var id = 0;
-        when(taskService.updateStatus(id)).thenThrow(expectedException);
-
-        var model = new ConcurrentModel();
-        var view = taskController.updateStatus(id, model);
-        var actualExceptionMessage = model.getAttribute("message");
-
-        assertThat(view).isEqualTo("errors/404");
-        assertThat(actualExceptionMessage).isEqualTo(expectedException.getMessage());
     }
 
 }
