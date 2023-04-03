@@ -9,6 +9,10 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+/**
+ * Точка входа в программу.
+ * URL для работы в браузере: localhost:8080 or localhost:8080/index
+ */
 @Configuration
 @SpringBootApplication
 public class Main {
