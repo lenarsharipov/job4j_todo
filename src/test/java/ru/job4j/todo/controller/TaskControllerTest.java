@@ -30,24 +30,13 @@ class TaskControllerTest {
     void setUp() {
         taskService = mock(TaskService.class);
         taskController = new TaskController(taskService);
-        var task1 = new Task();
-        task1.setId(1);
-        task1.setDescription("task1");
-        task1.setCreated(LocalDateTime.of(
+        var oldDate = LocalDateTime.of(
                 LocalDate.of(MIN.getYear(), 1, 1),
-                LocalTime.of(0, 0, 0)));
-        task1.setDone(false);
-        var task2 = new Task();
-        task2.setId(2);
-        task2.setDescription("task2");
-        task2.setCreated(now());
-        task2.setDone(true);
-        var task3 = new Task();
-        task2.setId(3);
-        task2.setDescription("task3");
-        task2.setCreated(now());
-        task2.setDone(false);
-        tasks = List.of(task1, task2, task3);
+                LocalTime.of(0, 0, 0));
+        tasks = List.of(
+                new Task(1, "task1", oldDate, false),
+                new Task(2, "task2", now(), true),
+                new Task(3, "task3", now(), false));
     }
 
     /**
