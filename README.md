@@ -42,8 +42,8 @@ ____________________________________________
 
 ____________________________________________
 <h3>Взаимодействие с приложением:</h3>
-<p>Главная страница</p>
-<img src="/src/main/resources/static/img/readme/screenshots/home.png" title="Home page"/>
+<pre><b>Главная страница</b>
+<img src="/src/main/resources/static/img/readme/screenshots/home.png" title="Home page"/></pre>
 <br>
 <p>Все задачи</p>
 <img src="/src/main/resources/static/img/readme/screenshots/all_tasks.png" title="All tasks page"/>
@@ -59,6 +59,15 @@ ____________________________________________
 <br>
 <p>Детальная страница задачи</p>
 <img src="/src/main/resources/static/img/readme/screenshots/task_detailed_info.png" title="Task info"/>
+<br>
+<p>Отредактировать задачу</p>
+<img src="/src/main/resources/static/img/readme/screenshots/task_edit.png" title="Task edit page"/>
+<br>
+<p>Отредактировать задачу</p>
+<img src="/src/main/resources/static/img/readme/screenshots/task_edit.png" title="Task edit page"/>
+<br>
+<p>Отредактировать задачу</p>
+<img src="/src/main/resources/static/img/readme/screenshots/task_edit.png" title="Task edit page"/>
 <br>
 <p>Отредактировать задачу</p>
 <img src="/src/main/resources/static/img/readme/screenshots/task_edit.png" title="Task edit page"/>
