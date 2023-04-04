@@ -19,7 +19,7 @@ ____________________________________________
     <li>Assertj</li>
     <li>H2 2.1.214</li> 
     <li>Mockito 4.0.0</li> 
-    <li>Jacoco 0.8.7</li> 
+    <li>Jacoco 0.8.8</li> 
     <li>Jcip-annotations 1.0</li>
 </ul>
 
@@ -41,9 +41,13 @@ ____________________________________________
 </ol>
 
 ____________________________________________
+<h3>Покрытие тестами:</h3>
+<img src="/src/main/resources/static/img/readme/screenshots/jacoco.png" title="Jacoco"/>
+
+____________________________________________
 <h3>Взаимодействие с приложением:</h3>
-<pre><p>Главная страница</p>
-<img src="/src/main/resources/static/img/readme/screenshots/home.png" title="Home page"/></pre>
+<p>Главная страница</p>
+<img src="/src/main/resources/static/img/readme/screenshots/home.png" title="Home page"/>
 <br>
 <p>Все задачи</p>
 <img src="/src/main/resources/static/img/readme/screenshots/all_tasks.png" title="All tasks page"/>
@@ -63,14 +67,14 @@ ____________________________________________
 <p>Отредактировать задачу</p>
 <img src="/src/main/resources/static/img/readme/screenshots/task_edit.png" title="Task edit page"/>
 <br>
-<p>Отредактировать задачу</p>
-<img src="/src/main/resources/static/img/readme/screenshots/task_edit.png" title="Task edit page"/>
+<p>Страница аутентификации</p>
+<img src="/src/main/resources/static/img/readme/screenshots/login_page.png" title="Login page"/>
 <br>
-<p>Отредактировать задачу</p>
-<img src="/src/main/resources/static/img/readme/screenshots/task_edit.png" title="Task edit page"/>
+<p>Пользователь аутентифицирован</p>
+<img src="/src/main/resources/static/img/readme/screenshots/loggedin.png" title="User logged in"/>
 <br>
-<p>Отредактировать задачу</p>
-<img src="/src/main/resources/static/img/readme/screenshots/task_edit.png" title="Task edit page"/>
+<p>Ошибка</p>
+<img src="/src/main/resources/static/img/readme/screenshots/login_error.png" title="Login error"/>
 <br>
 
 ____________________________________________

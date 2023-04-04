@@ -1,6 +1,7 @@
 package ru.job4j.todo.repository;
 
 import lombok.AllArgsConstructor;
+import net.jcip.annotations.ThreadSafe;
 import org.hibernate.SessionFactory;
 import org.springframework.stereotype.Repository;
 import ru.job4j.todo.model.Task;
@@ -15,6 +16,8 @@ import java.util.Optional;
  * @author Lenar Sharipov
  * @version 1.0
  */
+
+@ThreadSafe
 @Repository
 @AllArgsConstructor
 public class TaskStore {
