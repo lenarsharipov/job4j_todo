@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.Optional;
 
 public interface TaskService {
-    Task save(Task task);
+    Optional<Task> save(Task task);
     boolean update(Task task);
     boolean updateStatus(int id);
     List<Task> findAll();

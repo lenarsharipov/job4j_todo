@@ -33,7 +33,7 @@ public class TaskStore {
      * @param task задача.
      * @return задача.
      */
-    public Task save(Task task) {
+    public Optional<Task> save(Task task) {
         var session = sf.openSession();
         try {
             session.beginTransaction();
@@ -44,7 +44,7 @@ public class TaskStore {
         } finally {
             session.close();
         }
-        return task;
+        return getById(task.getId());
     }
 
     /**

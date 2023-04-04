@@ -31,7 +31,7 @@ public class UserStore {
      * @param user пользователь.
      * @return пользователь.
      */
-    public User save(User user) {
+    public Optional<User> save(User user) {
         var session = sf.openSession();
         try {
             session.beginTransaction();
@@ -42,7 +42,30 @@ public class UserStore {
         } finally {
             session.close();
         }
-        return user;
+        return findById(user.getId());
+    }
+
+    /**
+     * Вывести пользователя, найденного по ID.
+     * @param id ID.
+     * @return Optional<User>
+     */
+    public Optional<User> findById(int id) {
+        var session = sf.openSession();
+        Optional<User> result = Optional.empty();
+        try {
+            session.beginTransaction();
+            result = session.createQuery(
+                    "FROM User WHERE id = :fId", User.class)
+                    .setParameter("fId", id)
+                    .uniqueResultOptional();
+            session.getTransaction().commit();
+        } catch (Exception e) {
+            session.getTransaction().rollback();
+        } finally {
+            session.close();
+        }
+        return result;
     }
 
     /**

@@ -56,7 +56,7 @@ class UserControllerTest {
     void whenAddNewUserThenSameDataAndRedirectToTasksPage() {
         var user = users.get(0);
         var userArgumentCaptor = ArgumentCaptor.forClass(User.class);
-        when(userService.save(userArgumentCaptor.capture())).thenReturn(user);
+        when(userService.save(userArgumentCaptor.capture())).thenReturn(Optional.of(user));
 
         var model = new ConcurrentModel();
         var view = userController.register(model, user);
@@ -74,7 +74,7 @@ class UserControllerTest {
     void whenAddNewUserWithNotUniqueLoginThenErrorPageWithMessage() {
         var expectedErrorMessage = "Пользователь с такой почтой уже существует";
         var user = new User(0, "name111", "login1", "123456");
-        when(userService.save(user)).thenReturn(user);
+        when(userService.save(user)).thenReturn(Optional.empty());
 
         var model = new ConcurrentModel();
         var view = userController.register(model, user);

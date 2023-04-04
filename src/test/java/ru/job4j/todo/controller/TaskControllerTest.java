@@ -111,7 +111,7 @@ class TaskControllerTest {
     void whenSaveTaskThenSameDataAndRedirectToTasksPage() {
         var task = tasks.get(0);
         var taskArgumentCaptor = ArgumentCaptor.forClass(Task.class);
-        when(taskService.save(taskArgumentCaptor.capture())).thenReturn(task);
+        when(taskService.save(taskArgumentCaptor.capture())).thenReturn(Optional.of(task));
 
         var model = new ConcurrentModel();
         var view = taskController.create(task, model);
