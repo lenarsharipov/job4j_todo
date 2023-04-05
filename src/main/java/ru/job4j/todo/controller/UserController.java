@@ -44,8 +44,8 @@ public class UserController {
      */
     @PostMapping("/register")
     public String register(Model model, @ModelAttribute User user) {
-        userService.save(user);
-        if (user.getId() == 0) {
+        var optionalUser = userService.save(user);
+        if (optionalUser.isEmpty()) {
             model.addAttribute("message", "Пользователь с такой почтой уже существует");
             return "errors/404";
         }

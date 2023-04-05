@@ -76,8 +76,8 @@ public class TaskController {
      */
     @PostMapping("/create")
     public String create(@ModelAttribute Task task, Model model) {
-        taskService.save(task);
-        if (task.getId() == 0) {
+        var taskOptional = taskService.save(task);
+        if (taskOptional.isEmpty()) {
             model.addAttribute("message", "Задача с указанным идентификатором не сохранена.");
             return "errors/404";
         }

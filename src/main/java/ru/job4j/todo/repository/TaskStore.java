@@ -35,16 +35,18 @@ public class TaskStore {
      */
     public Optional<Task> save(Task task) {
         var session = sf.openSession();
+        Optional<Task> result = Optional.empty();
         try {
             session.beginTransaction();
             session.save(task);
+            result = Optional.of(task);
             session.getTransaction().commit();
         } catch (Exception e) {
             session.getTransaction().rollback();
         } finally {
             session.close();
         }
-        return getById(task.getId());
+        return result;
     }
 
     /**
