@@ -37,7 +37,7 @@ public class TaskStore {
             crudRepository.run(session -> session.persist(task));
             result = Optional.of(task);
         } catch (Exception exception) {
-            return result;
+            exception.printStackTrace();
         }
         return result;
     }
@@ -48,15 +48,17 @@ public class TaskStore {
      * @return true/false.
      */
     public boolean update(Task task) {
+        var result = false;
         try {
-            return crudRepository.isExecuted(
+            result = crudRepository.isExecuted(
                     "UPDATE Task SET description = :fDescription WHERE id = :fId",
                     Map.of("fDescription", task.getDescription(),
                             "fId", task.getId())
             );
-        } catch (Exception e) {
-            return false;
+        } catch (Exception exception) {
+            exception.printStackTrace();
         }
+        return result;
     }
 
     /**
@@ -65,14 +67,16 @@ public class TaskStore {
      * @return true или false.
      */
     public boolean updateStatus(int id) {
+        var result = false;
         try {
-            return crudRepository.isExecuted(
+            result = crudRepository.isExecuted(
                     "UPDATE Task SET done = true WHERE id = :fId",
                     Map.of("fId", id)
             );
         } catch (Exception exception) {
-            return false;
+            exception.printStackTrace();
         }
+        return result;
     }
 
     /**
@@ -86,7 +90,7 @@ public class TaskStore {
                     "FROM Task ORDER BY id ASC", Task.class
             );
         } catch (Exception exception) {
-            return result;
+            exception.printStackTrace();
         }
         return result;
     }
@@ -103,7 +107,7 @@ public class TaskStore {
                     Map.of("fDone", done)
             );
         } catch (Exception exception) {
-            return result;
+            exception.printStackTrace();
         }
         return result;
     }
@@ -120,7 +124,7 @@ public class TaskStore {
                     Map.of("fDone", LocalDateTime.now().minusDays(DAYS_RANGE))
             );
         } catch (Exception exception) {
-            return result;
+            exception.printStackTrace();
         }
         return result;
     }
@@ -131,16 +135,16 @@ public class TaskStore {
      * @return Optional<Task>.
      */
     public Optional<Task> getById(int id) {
-        Optional<Task> optionalTask = Optional.empty();
+        Optional<Task> result = Optional.empty();
         try {
-            optionalTask = crudRepository.optional(
+            result = crudRepository.optional(
                     "FROM Task WHERE id = :fId", Task.class,
                     Map.of("fId", id)
             );
         } catch (Exception exception) {
-            return optionalTask;
+            exception.printStackTrace();
         }
-        return optionalTask;
+        return result;
     }
 
     /**
@@ -156,7 +160,7 @@ public class TaskStore {
                     Map.of("fId", id)
             );
         } catch (Exception exception) {
-            return false;
+            exception.printStackTrace();
         }
         return result;
     }

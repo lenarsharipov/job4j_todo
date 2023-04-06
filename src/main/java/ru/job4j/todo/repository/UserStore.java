@@ -34,7 +34,7 @@ public class UserStore {
             crudRepository.run(session -> session.persist(user));
             result = Optional.of(user);
         } catch (Exception exception) {
-            return result;
+            exception.printStackTrace();
         }
         return result;
     }
@@ -46,18 +46,18 @@ public class UserStore {
      * @return Optional<User>.
      */
     public Optional<User> findByLoginAndPassword(String login, String password) {
-        Optional<User> userOptional = Optional.empty();
+        Optional<User> result = Optional.empty();
         try {
-            userOptional = crudRepository.optional(
+            result = crudRepository.optional(
                     "FROM User WHERE login = :fLogin AND password = :fPassword",
                     User.class, Map.of(
                             "fLogin", login,
                             "fPassword", password)
             );
         } catch (Exception exception) {
-            return userOptional;
+            exception.printStackTrace();
         }
-        return userOptional;
+        return result;
     }
 
     /**
@@ -69,7 +69,7 @@ public class UserStore {
         try {
             result = crudRepository.query("FROM User ORDER BY id ASC", User.class);
         } catch (Exception exception) {
-            return result;
+            exception.printStackTrace();
         }
         return result;
     }
@@ -80,11 +80,15 @@ public class UserStore {
      * @return true/false.
      */
     public boolean deleteByLogin(String login) {
+        var result = false;
         try {
-            return crudRepository.isExecuted("DELETE FROM User WHERE login = :fLogin");
+            result = crudRepository.isExecuted(
+                    "DELETE FROM User WHERE login = :fLogin",
+                    Map.of("fLogin", login));
         } catch (Exception exception) {
-            return false;
+            exception.printStackTrace();
         }
+        return result;
     }
 
 }
