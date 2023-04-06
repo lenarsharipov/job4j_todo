@@ -2,13 +2,13 @@ package ru.job4j.todo.repository;
 
 import lombok.AllArgsConstructor;
 import net.jcip.annotations.ThreadSafe;
-import org.hibernate.SessionFactory;
 import org.springframework.stereotype.Repository;
 import ru.job4j.todo.model.Task;
 
 import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 /**
@@ -22,10 +22,8 @@ import java.util.Optional;
 @AllArgsConstructor
 public class TaskStore {
 
-    /**
-     * Объект конфигуратор SessionFactory.
-     */
-    private final SessionFactory sf;
+    private final CrudRepository crudRepository;
+
     private static final int DAYS_RANGE = 1;
 
     /**
@@ -34,17 +32,12 @@ public class TaskStore {
      * @return задача.
      */
     public Optional<Task> save(Task task) {
-        var session = sf.openSession();
         Optional<Task> result = Optional.empty();
         try {
-            session.beginTransaction();
-            session.save(task);
+            crudRepository.run(session -> session.persist(task));
             result = Optional.of(task);
-            session.getTransaction().commit();
-        } catch (Exception e) {
-            session.getTransaction().rollback();
-        } finally {
-            session.close();
+        } catch (Exception exception) {
+            return result;
         }
         return result;
     }
@@ -55,22 +48,15 @@ public class TaskStore {
      * @return true/false.
      */
     public boolean update(Task task) {
-        var result = false;
-        var session = sf.openSession();
         try {
-            session.beginTransaction();
-            result = session.createQuery(
-                    "UPDATE Task SET description = :fDescription WHERE id = :fId")
-                    .setParameter("fDescription", task.getDescription())
-                    .setParameter("fId", task.getId())
-                    .executeUpdate() > 0;
-            session.getTransaction().commit();
+            return crudRepository.isExecuted(
+                    "UPDATE Task SET description = :fDescription WHERE id = :fId",
+                    Map.of("fDescription", task.getDescription(),
+                            "fId", task.getId())
+            );
         } catch (Exception e) {
-            session.getTransaction().rollback();
-        } finally {
-            session.close();
+            return false;
         }
-        return result;
     }
 
     /**
@@ -79,21 +65,14 @@ public class TaskStore {
      * @return true или false.
      */
     public boolean updateStatus(int id) {
-        var result = false;
-        var session = sf.openSession();
         try {
-            session.beginTransaction();
-            result = session.createQuery(
-                    "UPDATE Task SET done = true WHERE id = :fId")
-                    .setParameter("fId", id)
-                    .executeUpdate() > 0;
-            session.getTransaction().commit();
-        } catch (Exception e) {
-            session.getTransaction().rollback();
-        } finally {
-            session.close();
+            return crudRepository.isExecuted(
+                    "UPDATE Task SET done = true WHERE id = :fId",
+                    Map.of("fId", id)
+            );
+        } catch (Exception exception) {
+            return false;
         }
-        return result;
     }
 
     /**
@@ -102,15 +81,12 @@ public class TaskStore {
      */
     public List<Task> findAll() {
         List<Task> result = Collections.emptyList();
-        var session = sf.openSession();
         try {
-            session.beginTransaction();
-            result = session.createQuery("FROM Task ORDER BY id ASC", Task.class).list();
-            session.getTransaction().commit();
-        } catch (Exception e) {
-            session.getTransaction().rollback();
-        } finally {
-            session.close();
+            result = crudRepository.query(
+                    "FROM Task ORDER BY id ASC", Task.class
+            );
+        } catch (Exception exception) {
+            return result;
         }
         return result;
     }
@@ -121,18 +97,13 @@ public class TaskStore {
      */
     public List<Task> findAllCompleted(boolean done) {
         List<Task> result = Collections.emptyList();
-        var session = sf.openSession();
         try {
-            session.beginTransaction();
-            result = session.createQuery(
-                    "FROM Task WHERE done = :fDone ORDER BY id ASC", Task.class)
-                    .setParameter("fDone", done)
-                    .list();
-            session.getTransaction().commit();
-        } catch (Exception e) {
-            session.getTransaction().rollback();
-        } finally {
-            session.close();
+            result = crudRepository.query(
+                    "FROM Task WHERE done = :fDone ORDER BY id ASC", Task.class,
+                    Map.of("fDone", done)
+            );
+        } catch (Exception exception) {
+            return result;
         }
         return result;
     }
@@ -143,18 +114,13 @@ public class TaskStore {
      */
     public List<Task> findAllNew() {
         List<Task> result = Collections.emptyList();
-        var session = sf.openSession();
         try {
-            session.beginTransaction();
-            result = session.createQuery(
-                    "FROM Task WHERE created >= :fStart ORDER BY id ASC", Task.class)
-                    .setParameter("fStart", LocalDateTime.now().minusDays(DAYS_RANGE))
-                    .list();
-            session.getTransaction().commit();
-        } catch (Exception e) {
-            session.getTransaction().rollback();
-        } finally {
-            session.close();
+            result = crudRepository.query(
+                    "FROM Task WHERE created >= :fDone ORDER BY id ASC", Task.class,
+                    Map.of("fDone", LocalDateTime.now().minusDays(DAYS_RANGE))
+            );
+        } catch (Exception exception) {
+            return result;
         }
         return result;
     }
@@ -166,16 +132,13 @@ public class TaskStore {
      */
     public Optional<Task> getById(int id) {
         Optional<Task> optionalTask = Optional.empty();
-        var session = sf.openSession();
         try {
-            session.beginTransaction();
-            optionalTask = session.createQuery(
-                    "FROM Task WHERE id = :fId", Task.class)
-                    .setParameter("fId", id)
-                    .uniqueResultOptional();
-            session.getTransaction().commit();
-        } catch (Exception e) {
-            session.getTransaction().rollback();
+            optionalTask = crudRepository.optional(
+                    "FROM Task WHERE id = :fId", Task.class,
+                    Map.of("fId", id)
+            );
+        } catch (Exception exception) {
+            return optionalTask;
         }
         return optionalTask;
     }
@@ -187,17 +150,13 @@ public class TaskStore {
      */
     public boolean delete(int id) {
         var result = false;
-        var session = sf.openSession();
         try {
-            session.beginTransaction();
-            result = session.createQuery("DELETE Task WHERE id = :fId")
-                    .setParameter("fId", id)
-                    .executeUpdate() > 0;
-            session.getTransaction().commit();
-        } catch (Exception e) {
-            session.getTransaction().rollback();
-        } finally {
-            session.close();
+            result = crudRepository.isExecuted(
+                    "DELETE Task WHERE id = :fId",
+                    Map.of("fId", id)
+            );
+        } catch (Exception exception) {
+            return false;
         }
         return result;
     }
