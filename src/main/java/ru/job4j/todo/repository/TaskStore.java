@@ -2,6 +2,7 @@ package ru.job4j.todo.repository;
 
 import lombok.AllArgsConstructor;
 import net.jcip.annotations.ThreadSafe;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
 import ru.job4j.todo.model.Task;
 
@@ -10,6 +11,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+
+import org.slf4j.Logger;
 
 /**
  * Хранилище задач.
@@ -21,6 +24,8 @@ import java.util.Optional;
 @Repository
 @AllArgsConstructor
 public class TaskStore {
+
+    private static final Logger LOG = LoggerFactory.getLogger(TaskStore.class.getName());
 
     private final CrudRepository crudRepository;
 
@@ -37,7 +42,7 @@ public class TaskStore {
             crudRepository.run(session -> session.persist(task));
             result = Optional.of(task);
         } catch (Exception exception) {
-            exception.printStackTrace();
+            LOG.error("Exception in log example", exception);
         }
         return result;
     }
@@ -56,7 +61,7 @@ public class TaskStore {
                             "fId", task.getId())
             );
         } catch (Exception exception) {
-            exception.printStackTrace();
+            LOG.error("Exception in log example", exception);
         }
         return result;
     }
@@ -74,7 +79,7 @@ public class TaskStore {
                     Map.of("fId", id)
             );
         } catch (Exception exception) {
-            exception.printStackTrace();
+            LOG.error("Exception in log example", exception);
         }
         return result;
     }
@@ -90,7 +95,7 @@ public class TaskStore {
                     "FROM Task ORDER BY id ASC", Task.class
             );
         } catch (Exception exception) {
-            exception.printStackTrace();
+            LOG.error("Exception in log example", exception);
         }
         return result;
     }
@@ -107,7 +112,7 @@ public class TaskStore {
                     Map.of("fDone", done)
             );
         } catch (Exception exception) {
-            exception.printStackTrace();
+            LOG.error("Exception in log example", exception);
         }
         return result;
     }
@@ -124,7 +129,7 @@ public class TaskStore {
                     Map.of("fDone", LocalDateTime.now().minusDays(DAYS_RANGE))
             );
         } catch (Exception exception) {
-            exception.printStackTrace();
+            LOG.error("Exception in log example", exception);
         }
         return result;
     }
@@ -142,7 +147,7 @@ public class TaskStore {
                     Map.of("fId", id)
             );
         } catch (Exception exception) {
-            exception.printStackTrace();
+            LOG.error("Exception in log example", exception);
         }
         return result;
     }
@@ -160,7 +165,7 @@ public class TaskStore {
                     Map.of("fId", id)
             );
         } catch (Exception exception) {
-            exception.printStackTrace();
+            LOG.error("Exception in log example", exception);
         }
         return result;
     }

@@ -2,6 +2,8 @@ package ru.job4j.todo.repository;
 
 import lombok.AllArgsConstructor;
 import net.jcip.annotations.ThreadSafe;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
 import ru.job4j.todo.model.User;
 
@@ -21,6 +23,8 @@ import java.util.Optional;
 @AllArgsConstructor
 public class UserStore {
 
+    private static final Logger LOG = LoggerFactory.getLogger(UserStore.class.getName());
+
     private final CrudRepository crudRepository;
 
     /**
@@ -34,7 +38,7 @@ public class UserStore {
             crudRepository.run(session -> session.persist(user));
             result = Optional.of(user);
         } catch (Exception exception) {
-            exception.printStackTrace();
+            LOG.error("Exception in log example", exception);
         }
         return result;
     }
@@ -55,7 +59,7 @@ public class UserStore {
                             "fPassword", password)
             );
         } catch (Exception exception) {
-            exception.printStackTrace();
+            LOG.error("Exception in log example", exception);
         }
         return result;
     }
@@ -69,7 +73,7 @@ public class UserStore {
         try {
             result = crudRepository.query("FROM User ORDER BY id ASC", User.class);
         } catch (Exception exception) {
-            exception.printStackTrace();
+            LOG.error("Exception in log example", exception);
         }
         return result;
     }
@@ -86,7 +90,7 @@ public class UserStore {
                     "DELETE FROM User WHERE login = :fLogin",
                     Map.of("fLogin", login));
         } catch (Exception exception) {
-            exception.printStackTrace();
+            LOG.error("Exception in log example", exception);
         }
         return result;
     }
