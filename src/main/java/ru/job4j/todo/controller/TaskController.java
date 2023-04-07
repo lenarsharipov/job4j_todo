@@ -70,7 +70,7 @@ public class TaskController {
     }
 
     /**
-     * Создать вакансию и перейти на страницу /tasks.
+     * Создать задачу и перейти на страницу /tasks.
      * @param model модель.
      * @param task создаваемая задача.
      * @return "redirect:/tasks".
