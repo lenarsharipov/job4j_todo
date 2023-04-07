@@ -5,6 +5,7 @@ import net.jcip.annotations.ThreadSafe;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import ru.job4j.todo.model.User;
 import ru.job4j.todo.service.TaskService;
 import ru.job4j.todo.model.Task;
 
@@ -75,7 +76,9 @@ public class TaskController {
      * @return "redirect:/tasks".
      */
     @PostMapping("/create")
-    public String create(@ModelAttribute Task task, Model model) {
+    public String create(@ModelAttribute Task task, @ModelAttribute User user, Model model) {
+        task.setId(0);
+        task.setUser(user);
         var taskOptional = taskService.save(task);
         if (taskOptional.isEmpty()) {
             model.addAttribute("message", "Задача с указанным идентификатором не сохранена.");

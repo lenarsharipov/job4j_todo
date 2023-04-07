@@ -72,7 +72,7 @@ public class UserController {
     public String loginUser(@ModelAttribute User user, Model model, HttpSession session) {
         var userOptional = userService.findByLoginAndPassword(user.getLogin(), user.getPassword());
         if (userOptional.isEmpty()) {
-            model.addAttribute("error", "Почта или пароль введены неверно");
+            model.addAttribute("message", "Почта или пароль введены неверно");
             return "errors/404";
         }
         session.setAttribute("user", userOptional.get());

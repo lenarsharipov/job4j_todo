@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.springframework.ui.ConcurrentModel;
 import ru.job4j.todo.model.Task;
+import ru.job4j.todo.model.User;
 import ru.job4j.todo.service.TaskService;
 
 import java.time.LocalDate;
@@ -21,6 +22,7 @@ import static org.mockito.Mockito.*;
 class TaskControllerTest {
     private TaskController taskController;
     private TaskService taskService;
+    private User admin;
     private List<Task> tasks;
 
     /**
@@ -33,10 +35,11 @@ class TaskControllerTest {
         var oldDate = LocalDateTime.of(
                 LocalDate.of(MIN.getYear(), 1, 1),
                 LocalTime.of(0, 0, 0));
+        admin = new User(1, "admin", "admin", "123456");
         tasks = List.of(
-                new Task(1, "task1", oldDate, false),
-                new Task(2, "task2", now(), true),
-                new Task(3, "task3", now(), false));
+                new Task(1, "task1", oldDate, false, admin),
+                new Task(2, "task2", now(), true, admin),
+                new Task(3, "task3", now(), false, admin));
     }
 
     /**
@@ -114,7 +117,7 @@ class TaskControllerTest {
         when(taskService.save(taskArgumentCaptor.capture())).thenReturn(Optional.of(task));
 
         var model = new ConcurrentModel();
-        var view = taskController.create(task, model);
+        var view = taskController.create(task, admin, model);
         var actualTask = taskArgumentCaptor.getValue();
 
         assertThat(view).isEqualTo("redirect:/tasks");

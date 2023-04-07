@@ -128,7 +128,7 @@ class UserControllerTest {
 
         var model = new ConcurrentModel();
         var view = userController.loginUser(user, model, session);
-        var actualErrorMessage = model.getAttribute("error");
+        var actualErrorMessage = model.getAttribute("message");
 
         assertThat(view).isEqualTo("errors/404");
         assertThat(actualErrorMessage).isEqualTo(expectedErrorMessage);
