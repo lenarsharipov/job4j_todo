@@ -51,6 +51,7 @@
           <th scope="col">Описание</th>
           <th scope="col">Дата создания</th>
           <th scope="col">Статус</th>
+          <th scope="col">Добавил</th>
         </tr>
         </thead>
         <tbody>
@@ -62,6 +63,7 @@
             <span th:if="${task.done}">Выполнено</span>
             <span th:if="${!task.done}">В процессе</span>
           </td>
+          <td th:text="${task.user.login}"/>
         </tr>
         </tbody>
       </table>
