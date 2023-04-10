@@ -4,6 +4,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.springframework.ui.ConcurrentModel;
+import ru.job4j.todo.model.Priority;
 import ru.job4j.todo.model.Task;
 import ru.job4j.todo.model.User;
 import ru.job4j.todo.service.TaskService;
@@ -23,6 +24,8 @@ class TaskControllerTest {
     private TaskController taskController;
     private TaskService taskService;
     private User admin;
+    private Priority urgently;
+    private Priority normal;
     private List<Task> tasks;
 
     /**
@@ -36,10 +39,19 @@ class TaskControllerTest {
                 LocalDate.of(MIN.getYear(), 1, 1),
                 LocalTime.of(0, 0, 0));
         admin = new User(1, "admin", "admin", "123456");
+        urgently = new Priority();
+        urgently.setId(1);
+        urgently.setName("urgently");
+        urgently.setPosition(1);
+        normal = new Priority();
+        normal.setId(2);
+        normal.setName("normal");
+        normal.setPosition(2);
+        urgently.setPosition(1);
         tasks = List.of(
-                new Task(1, "task1", oldDate, false, admin),
-                new Task(2, "task2", now(), true, admin),
-                new Task(3, "task3", now(), false, admin));
+                new Task(1, "task1", oldDate, false, admin, urgently),
+                new Task(2, "task2", now(), true, admin, normal),
+                new Task(3, "task3", now(), false, admin, urgently));
     }
 
     /**

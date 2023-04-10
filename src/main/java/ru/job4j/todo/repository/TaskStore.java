@@ -92,8 +92,9 @@ public class TaskStore {
         List<Task> result = Collections.emptyList();
         try {
             result = crudRepository.query(
-                    "FROM Task ORDER BY id ASC", Task.class
+                    "FROM Task t JOIN FETCH t.priority ORDER BY t.id", Task.class
             );
+            System.out.println(result);
         } catch (Exception exception) {
             LOG.error("Exception in log example", exception);
         }
@@ -108,7 +109,8 @@ public class TaskStore {
         List<Task> result = Collections.emptyList();
         try {
             result = crudRepository.query(
-                    "FROM Task WHERE done = :fDone ORDER BY id ASC", Task.class,
+                    "FROM Task t JOIN FETCH t.priority WHERE t.done = :fDone ORDER BY t.id ASC",
+                    Task.class,
                     Map.of("fDone", done)
             );
         } catch (Exception exception) {

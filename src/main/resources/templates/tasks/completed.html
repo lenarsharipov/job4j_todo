@@ -50,6 +50,7 @@
           <th scope="col">Описание</th>
           <th scope="col">Дата создания</th>
           <th scope="col">Статус</th>
+          <th scope="col">Приоритет</th>
           <th scope="col">Добавил</th>
         </tr>
         </thead>
@@ -59,6 +60,7 @@
           <td><a th:text="${task.description}" th:href="@{/tasks/{taskId}(taskId=${task.id})}"></a></td>
           <td th:text="${task.created()}"/>
           <td><span>Выполнено</span></td>
+          <td th:text="${task.priority.name}"/>
           <td th:text="${task.user.login}"/>
         </tr>
         </tbody>
