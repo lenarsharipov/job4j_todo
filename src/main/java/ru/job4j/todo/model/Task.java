@@ -32,6 +32,10 @@ public class Task {
     @ToString.Include
     private boolean done;
 
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private User user;
+
     @ToString.Include
     public String created() {
         return FORMATTER.format(created);
