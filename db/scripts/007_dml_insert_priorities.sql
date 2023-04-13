@@ -1,3 +1,6 @@
 INSERT INTO priorities (name, position)
-VALUES  ('urgently', 1),
-        ('normal', 2);
+VALUES  ('Очень высокий', 1),
+        ('Высокий', 2),
+        ('Обычный', 3),
+        ('Низкий', 4),
+        ('Очень низкий', 5);

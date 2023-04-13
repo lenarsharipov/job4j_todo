@@ -4,11 +4,15 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.springframework.ui.ConcurrentModel;
+import ru.job4j.todo.model.Category;
 import ru.job4j.todo.model.Priority;
 import ru.job4j.todo.model.Task;
 import ru.job4j.todo.model.User;
+import ru.job4j.todo.service.CategoryService;
+import ru.job4j.todo.service.PriorityService;
 import ru.job4j.todo.service.TaskService;
 
+import javax.servlet.http.HttpSession;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -23,10 +27,13 @@ import static org.mockito.Mockito.*;
 class TaskControllerTest {
     private TaskController taskController;
     private TaskService taskService;
+    private PriorityService priorityService;
+    private CategoryService categoryService;
     private User admin;
     private Priority urgently;
     private Priority normal;
     private List<Task> tasks;
+    private List<Category> categories;
 
     /**
      * Инициализировать taskService, taskController, списка задач tasks перед каждым тестом.
@@ -34,7 +41,9 @@ class TaskControllerTest {
     @BeforeEach
     void setUp() {
         taskService = mock(TaskService.class);
-        taskController = new TaskController(taskService);
+        priorityService = mock(PriorityService.class);
+        categoryService = mock(CategoryService.class);
+        taskController = new TaskController(taskService, priorityService, categoryService);
         var oldDate = LocalDateTime.of(
                 LocalDate.of(MIN.getYear(), 1, 1),
                 LocalTime.of(0, 0, 0));
@@ -43,15 +52,17 @@ class TaskControllerTest {
         urgently.setId(1);
         urgently.setName("urgently");
         urgently.setPosition(1);
+        var category = new Category(1, "Job");
+        categories = List.of(category);
         normal = new Priority();
         normal.setId(2);
         normal.setName("normal");
         normal.setPosition(2);
         urgently.setPosition(1);
         tasks = List.of(
-                new Task(1, "task1", oldDate, false, admin, urgently),
-                new Task(2, "task2", now(), true, admin, normal),
-                new Task(3, "task3", now(), false, admin, urgently));
+                new Task(1, "task1", oldDate, false, admin, urgently, categories),
+                new Task(2, "task2", now(), true, admin, normal, categories),
+                new Task(3, "task3", now(), false, admin, urgently, categories));
     }
 
     /**
@@ -113,7 +124,8 @@ class TaskControllerTest {
     void whenRequestTaskCreationLPageThenGetIt() {
         var expectedView = "tasks/create";
 
-        var view = taskController.getCreationPage();
+        var model = new ConcurrentModel();
+        var view = taskController.getCreationPage(model);
 
         assertThat(view).isEqualTo(expectedView);
     }
@@ -124,12 +136,13 @@ class TaskControllerTest {
      */
     @Test
     void whenSaveTaskThenSameDataAndRedirectToTasksPage() {
+        var session = mock(HttpSession.class);
         var task = tasks.get(0);
         var taskArgumentCaptor = ArgumentCaptor.forClass(Task.class);
         when(taskService.save(taskArgumentCaptor.capture())).thenReturn(Optional.of(task));
 
         var model = new ConcurrentModel();
-        var view = taskController.create(task, admin, model);
+        var view = taskController.create(task, model, session);
         var actualTask = taskArgumentCaptor.getValue();
 
         assertThat(view).isEqualTo("redirect:/tasks");

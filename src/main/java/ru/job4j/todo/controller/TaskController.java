@@ -5,9 +5,13 @@ import net.jcip.annotations.ThreadSafe;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-import ru.job4j.todo.model.User;
-import ru.job4j.todo.service.TaskService;
 import ru.job4j.todo.model.Task;
+import ru.job4j.todo.model.User;
+import ru.job4j.todo.service.CategoryService;
+import ru.job4j.todo.service.PriorityService;
+import ru.job4j.todo.service.TaskService;
+
+import javax.servlet.http.HttpSession;
 
 /**
  * Контроллер TaskController
@@ -26,6 +30,8 @@ public class TaskController {
     private static final boolean FLAG = true;
 
     private final TaskService taskService;
+    private final PriorityService priorityService;
+    private final CategoryService categoryService;
 
     /**
      * Вывести страницу со всеми задачами.
@@ -65,7 +71,10 @@ public class TaskController {
      * @return tasks/create.
      */
     @GetMapping({"/", "/create"})
-    public String getCreationPage() {
+    public String getCreationPage(Model model) {
+        model.addAttribute("task", new Task());
+        model.addAttribute("priorities", priorityService.findAll());
+        model.addAttribute("categories", categoryService.findAll());
         return "tasks/create";
     }
 
@@ -76,8 +85,8 @@ public class TaskController {
      * @return "redirect:/tasks".
      */
     @PostMapping("/create")
-    public String create(@ModelAttribute Task task, @ModelAttribute User user, Model model) {
-        task.setId(0);
+    public String create(Task task, Model model, HttpSession session) {
+        var user = (User) session.getAttribute("user");
         task.setUser(user);
         var taskOptional = taskService.save(task);
         if (taskOptional.isEmpty()) {
@@ -129,6 +138,10 @@ public class TaskController {
     @GetMapping("/edit/{id}")
     public String getEditPage(@PathVariable int id, Model model) {
         var taskOptional = taskService.findById(id);
+        var priorities = priorityService.findAll();
+        var categories = categoryService.findAll();
+        model.addAttribute("priorities", priorities);
+        model.addAttribute("categories", categories);
         if (taskOptional.isEmpty()) {
             model.addAttribute("message", NOT_FOUND_MESSAGE);
             return "errors/404";

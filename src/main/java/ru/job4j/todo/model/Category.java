@@ -5,23 +5,24 @@ import lombok.*;
 import javax.persistence.*;
 
 @Entity
-@Table(name = "users")
-@NoArgsConstructor
+@Table(name = "categories")
 @AllArgsConstructor
+@NoArgsConstructor
 @Data
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
-public class User {
+public class Category {
 
     @EqualsAndHashCode.Include
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
-
-    private String name;
+    private Integer id;
 
     @EqualsAndHashCode.Include
-    private String login;
+    private String name;
 
-    private String password;
+    @Override
+    public String toString() {
+        return name;
+    }
 
 }

@@ -39,7 +39,7 @@ public class TaskStore {
     public Optional<Task> save(Task task) {
         Optional<Task> result = Optional.empty();
         try {
-            crudRepository.run(session -> session.persist(task));
+            crudRepository.run(session -> session.merge(task));
             result = Optional.of(task);
         } catch (Exception exception) {
             LOG.error("Exception in log example", exception);
@@ -92,9 +92,12 @@ public class TaskStore {
         List<Task> result = Collections.emptyList();
         try {
             result = crudRepository.query(
-                    "FROM Task t JOIN FETCH t.priority ORDER BY t.id", Task.class
-            );
-            System.out.println(result);
+                    """
+                    FROM Task t
+                    LEFT JOIN FETCH t.priority
+                    LEFT JOIN FETCH t.categories
+                    ORDER BY t.id ASC
+                    """, Task.class);
         } catch (Exception exception) {
             LOG.error("Exception in log example", exception);
         }
@@ -109,9 +112,12 @@ public class TaskStore {
         List<Task> result = Collections.emptyList();
         try {
             result = crudRepository.query(
-                    "FROM Task t JOIN FETCH t.priority WHERE t.done = :fDone ORDER BY t.id ASC",
-                    Task.class,
-                    Map.of("fDone", done)
+                    """
+                          FROM Task t
+                          LEFT JOIN FETCH t.priority
+                          LEFT JOIN FETCH t.categories
+                          WHERE t.done = :fDone ORDER BY t.id ASC
+                          """, Task.class, Map.of("fDone", done)
             );
         } catch (Exception exception) {
             LOG.error("Exception in log example", exception);
@@ -127,8 +133,13 @@ public class TaskStore {
         List<Task> result = Collections.emptyList();
         try {
             result = crudRepository.query(
-                    "FROM Task WHERE created >= :fDone ORDER BY id ASC", Task.class,
-                    Map.of("fDone", LocalDateTime.now().minusDays(DAYS_RANGE))
+                    """
+                    FROM Task t
+                    LEFT JOIN FETCH t.priority
+                    LEFT JOIN FETCH t.categories
+                    WHERE t.created >= :fCreated ORDER BY t.id ASC
+                    """, Task.class,
+                    Map.of("fCreated", LocalDateTime.now().minusDays(DAYS_RANGE))
             );
         } catch (Exception exception) {
             LOG.error("Exception in log example", exception);
@@ -144,9 +155,12 @@ public class TaskStore {
     public Optional<Task> getById(int id) {
         Optional<Task> result = Optional.empty();
         try {
-            result = crudRepository.optional(
-                    "FROM Task WHERE id = :fId", Task.class,
-                    Map.of("fId", id)
+            result = crudRepository.optional("""
+                     FROM Task t
+                     LEFT JOIN FETCH t.priority
+                     LEFT JOIN FETCH t.categories
+                     WHERE t.id = :fId
+                     """, Task.class, Map.of("fId", id)
             );
         } catch (Exception exception) {
             LOG.error("Exception in log example", exception);
