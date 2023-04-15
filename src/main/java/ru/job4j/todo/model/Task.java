@@ -47,7 +47,7 @@ public class Task {
     @ManyToMany(cascade = {CascadeType.PERSIST},
                 fetch = FetchType.LAZY)
     @JoinTable(
-            name = "task_category",
+            name = "tasks_categories",
             joinColumns = @JoinColumn(name = "task_id"),
             inverseJoinColumns = @JoinColumn(name = "category_id")
     )
