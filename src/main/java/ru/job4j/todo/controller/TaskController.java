@@ -27,20 +27,20 @@ import javax.servlet.http.HttpServletRequest;
 public class TaskController {
 
     /**
-     * MESSAGES
+     ******************** MESSAGES ************************
      */
-    private static final String NOT_FOUND_MESSAGE = """
+    private static final String TASK_NOT_FOUND = """
             Задача с указанными идентификатором не найдена.
             """;
-    private static final String NOT_SAVED_MESSAGE = """
+    private static final String TASK_NOT_SAVED = """
             Задача с указанными идентификатором не сохранена.
             """;
-    private static final String NOT_UPDATED_MESSAGE = """
+    private static final String TASK_NOT_UPDATED = """
             Задача с указанными идентификатором не обновлена.
             """;
 
     /**
-     * PAGES/VIEWS
+     ******************** PAGES ************************
      */
     private static final String ERRORS_404 = "errors/404";
     private static final String REDIRECT_TASKS = "redirect:/tasks";
@@ -52,8 +52,8 @@ public class TaskController {
     private static final String TASKS_EDIT = "/tasks/edit";
 
     /**
-     * ATTRIBUTES
-     */
+     ******************** ATTRIBUTES ************************
+     * */
     private static final String MESSAGE = "message";
     private static final String TASKS = "tasks";
     private static final String TASK = "task";
@@ -140,7 +140,7 @@ public class TaskController {
         addCategories(task, request);
         var taskOptional = taskService.save(task);
         if (taskOptional.isEmpty()) {
-            model.addAttribute(MESSAGE, NOT_SAVED_MESSAGE);
+            model.addAttribute(MESSAGE, TASK_NOT_SAVED);
             return ERRORS_404;
         }
         return REDIRECT_TASKS;
@@ -156,7 +156,7 @@ public class TaskController {
     public String getById(@PathVariable int id, Model model) {
         var taskOptional = taskService.findById(id);
         if (taskOptional.isEmpty()) {
-            model.addAttribute(MESSAGE, NOT_FOUND_MESSAGE);
+            model.addAttribute(MESSAGE, TASK_NOT_FOUND);
             return ERRORS_404;
         }
         model.addAttribute(TASK, taskOptional.get());
@@ -173,7 +173,7 @@ public class TaskController {
     public String delete(@PathVariable int id, Model model) {
         var isDeleted = taskService.delete(id);
         if (!isDeleted) {
-            model.addAttribute(MESSAGE, NOT_FOUND_MESSAGE);
+            model.addAttribute(MESSAGE, TASK_NOT_FOUND);
             return ERRORS_404;
         }
         return REDIRECT_TASKS;
@@ -189,7 +189,7 @@ public class TaskController {
     public String getEditPage(@PathVariable int id, Model model) {
         var taskOptional = taskService.findById(id);
         if (taskOptional.isEmpty()) {
-            model.addAttribute(MESSAGE, NOT_FOUND_MESSAGE);
+            model.addAttribute(MESSAGE, TASK_NOT_FOUND);
             return ERRORS_404;
         }
         var priorities = priorityService.findAll();
@@ -211,7 +211,7 @@ public class TaskController {
         addCategories(task, request);
         var isUpdated = taskService.update(task);
         if (!isUpdated) {
-            model.addAttribute(MESSAGE, NOT_UPDATED_MESSAGE);
+            model.addAttribute(MESSAGE, TASK_NOT_UPDATED);
             return ERRORS_404;
         }
         return REDIRECT_TASKS;
@@ -227,7 +227,7 @@ public class TaskController {
     public String updateStatus(@PathVariable int id, Model model) {
         var isUpdated = taskService.updateStatus(id);
         if (!isUpdated) {
-            model.addAttribute(MESSAGE, NOT_UPDATED_MESSAGE);
+            model.addAttribute(MESSAGE, TASK_NOT_UPDATED);
             return ERRORS_404;
         }
         return REDIRECT_TASKS;
