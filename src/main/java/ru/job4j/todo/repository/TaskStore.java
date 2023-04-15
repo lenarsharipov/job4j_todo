@@ -24,6 +24,24 @@ import org.slf4j.Logger;
 @Repository
 @AllArgsConstructor
 public class TaskStore {
+    /**
+     ******************** MESSAGES ************************
+     */
+    private static final String TASK_NOT_SAVED = """
+            Задача с указанным идентификатором не сохранена.
+            """;
+    private static final String TASK_NOT_UPDATED = """
+            Задача с указанным идентификатором не обновлена.
+            """;
+    private static final String STATUS_NOT_UPDATED = """
+            Статус задачи не обновлен.
+            """;
+    private static final String TASKS_NOT_FOUND = """
+            Задачи не найдены.
+            """;
+    private static final String TASK_NOT_DELETED = """
+            Задача с указанным идентификатором не удалена.
+            """;
 
     private static final Logger LOG = LoggerFactory.getLogger(TaskStore.class.getName());
 
@@ -42,7 +60,7 @@ public class TaskStore {
             crudRepository.run(session -> session.merge(task));
             result = Optional.of(task);
         } catch (Exception exception) {
-            LOG.error("Exception in log example", exception);
+            LOG.error(TASK_NOT_SAVED, exception);
         }
         return result;
     }
@@ -58,7 +76,7 @@ public class TaskStore {
             crudRepository.run(session -> session.merge(task));
         } catch (Exception exception) {
             result = false;
-            LOG.error("Exception in log example", exception);
+            LOG.error(TASK_NOT_UPDATED, exception);
         }
         return result;
     }
@@ -76,7 +94,7 @@ public class TaskStore {
                     Map.of("fId", id)
             );
         } catch (Exception exception) {
-            LOG.error("Exception in log example", exception);
+            LOG.error(STATUS_NOT_UPDATED, exception);
         }
         return result;
     }
@@ -97,7 +115,7 @@ public class TaskStore {
                     ORDER BY t.id ASC
                     """, Task.class);
         } catch (Exception exception) {
-            LOG.error("Exception in log example", exception);
+            LOG.error(TASKS_NOT_FOUND, exception);
         }
         return result;
     }
@@ -120,7 +138,7 @@ public class TaskStore {
                           """, Task.class, Map.of("fDone", done)
             );
         } catch (Exception exception) {
-            LOG.error("Exception in log example", exception);
+            LOG.error(TASKS_NOT_FOUND, exception);
         }
         return result;
     }
@@ -144,7 +162,7 @@ public class TaskStore {
                     Map.of("fCreated", LocalDateTime.now().minusDays(DAYS_RANGE))
             );
         } catch (Exception exception) {
-            LOG.error("Exception in log example", exception);
+            LOG.error(TASKS_NOT_FOUND, exception);
         }
         return result;
     }
@@ -166,7 +184,7 @@ public class TaskStore {
                      """, Task.class, Map.of("fId", id)
             );
         } catch (Exception exception) {
-            LOG.error("Exception in log example", exception);
+            LOG.error(TASKS_NOT_FOUND, exception);
         }
         return result;
     }
@@ -184,7 +202,7 @@ public class TaskStore {
                     Map.of("fId", id)
             );
         } catch (Exception exception) {
-            LOG.error("Exception in log example", exception);
+            LOG.error(TASK_NOT_DELETED, exception);
         }
         return result;
     }

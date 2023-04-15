@@ -53,7 +53,7 @@ public class TaskController {
 
     /**
      ******************** ATTRIBUTES ************************
-     * */
+     */
     private static final String MESSAGE = "message";
     private static final String TASKS = "tasks";
     private static final String TASK = "task";
@@ -61,7 +61,6 @@ public class TaskController {
     private static final String CATEGORIES = "categories";
     private static final String PRIORITIES = "priorities";
     private static final String CATEGORY_IDS = "categoryIds";
-
 
     private static final boolean FLAG = true;
 
