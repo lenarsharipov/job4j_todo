@@ -61,7 +61,7 @@
                 <tr th:each="task: ${tasks}">
                     <td th:text="${task.id}" />
                     <td><a th:text="${task.description}" th:href="@{/tasks/{taskId}(taskId=${task.id})}"></a></td>
-                    <td th:text="${task.categories}"></td>
+                    <td th:text="${task.categories()}"></td>
                     <td th:text="${task.created()}"/>
                     <td>
                         <span th:if="${task.done}">Выполнено</span>

@@ -5,13 +5,14 @@ import net.jcip.annotations.ThreadSafe;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import ru.job4j.todo.model.Category;
 import ru.job4j.todo.model.Task;
 import ru.job4j.todo.model.User;
 import ru.job4j.todo.service.CategoryService;
 import ru.job4j.todo.service.PriorityService;
 import ru.job4j.todo.service.TaskService;
 
-import javax.servlet.http.HttpSession;
+import javax.servlet.http.HttpServletRequest;
 
 /**
  * Контроллер TaskController
@@ -24,9 +25,44 @@ import javax.servlet.http.HttpSession;
 @RequestMapping("/tasks")
 @AllArgsConstructor
 public class TaskController {
+
+    /**
+     * MESSAGES
+     */
     private static final String NOT_FOUND_MESSAGE = """
-                                                    Задача с указанными идентификатором не найдена.
-                                                    """;
+            Задача с указанными идентификатором не найдена.
+            """;
+    private static final String NOT_SAVED_MESSAGE = """
+            Задача с указанными идентификатором не сохранена.
+            """;
+    private static final String NOT_UPDATED_MESSAGE = """
+            Задача с указанными идентификатором не обновлена.
+            """;
+
+    /**
+     * PAGES/VIEWS
+     */
+    private static final String ERRORS_404 = "errors/404";
+    private static final String REDIRECT_TASKS = "redirect:/tasks";
+    private static final String TASKS_LIST = "tasks/list";
+    private static final String TASKS_COMPLETED = "tasks/completed";
+    private static final String TASKS_NEW = "tasks/new";
+    private static final String TASKS_CREATE = "tasks/create";
+    private static final String TASKS_ONE = "tasks/one";
+    private static final String TASKS_EDIT = "/tasks/edit";
+
+    /**
+     * ATTRIBUTES
+     */
+    private static final String MESSAGE = "message";
+    private static final String TASKS = "tasks";
+    private static final String TASK = "task";
+    private static final String USER = "user";
+    private static final String CATEGORIES = "categories";
+    private static final String PRIORITIES = "priorities";
+    private static final String CATEGORY_IDS = "categoryIds";
+
+
     private static final boolean FLAG = true;
 
     private final TaskService taskService;
@@ -40,8 +76,8 @@ public class TaskController {
      */
     @GetMapping()
     public String getAll(Model model) {
-        model.addAttribute("tasks", taskService.findAll());
-        return "tasks/list";
+        model.addAttribute(TASKS, taskService.findAll());
+        return TASKS_LIST;
     }
 
     /**
@@ -51,8 +87,8 @@ public class TaskController {
      */
     @GetMapping("/completed")
     public String getCompleted(Model model) {
-        model.addAttribute("tasks", taskService.findAllCompleted(FLAG));
-        return "tasks/completed";
+        model.addAttribute(TASKS, taskService.findAllCompleted(FLAG));
+        return TASKS_COMPLETED;
     }
 
     /**
@@ -62,8 +98,8 @@ public class TaskController {
      */
     @GetMapping("/new")
     public String getNew(Model model) {
-        model.addAttribute("tasks", taskService.findAllNew());
-        return "tasks/new";
+        model.addAttribute(TASKS, taskService.findAllNew());
+        return TASKS_NEW;
     }
 
     /**
@@ -72,10 +108,23 @@ public class TaskController {
      */
     @GetMapping({"/", "/create"})
     public String getCreationPage(Model model) {
-        model.addAttribute("task", new Task());
-        model.addAttribute("priorities", priorityService.findAll());
-        model.addAttribute("categories", categoryService.findAll());
-        return "tasks/create";
+        model.addAttribute(TASK, new Task());
+        model.addAttribute(PRIORITIES, priorityService.findAll());
+        model.addAttribute(CATEGORIES, categoryService.findAll());
+        return TASKS_CREATE;
+    }
+
+    /**
+     * Перевести ID полученных категорий из массива строк в массив int и добавить в Task.
+     * @param task задача
+     * @param request HttpServletRequest
+     */
+    private void addCategories(Task task, HttpServletRequest request) {
+        var categoryIds = request.getParameterValues(CATEGORY_IDS);
+        for (var categoryId : categoryIds) {
+            var id = Integer.parseInt(categoryId);
+            task.getCategories().add(new Category(id));
+        }
     }
 
     /**
@@ -85,15 +134,16 @@ public class TaskController {
      * @return "redirect:/tasks".
      */
     @PostMapping("/create")
-    public String create(Task task, Model model, HttpSession session) {
-        var user = (User) session.getAttribute("user");
+    public String create(Task task, Model model, HttpServletRequest request) {
+        var user = (User) request.getAttribute(USER);
         task.setUser(user);
+        addCategories(task, request);
         var taskOptional = taskService.save(task);
         if (taskOptional.isEmpty()) {
-            model.addAttribute("message", "Задача с указанным идентификатором не сохранена.");
-            return "errors/404";
+            model.addAttribute(MESSAGE, NOT_SAVED_MESSAGE);
+            return ERRORS_404;
         }
-        return "redirect:/tasks";
+        return REDIRECT_TASKS;
     }
 
     /**
@@ -106,11 +156,11 @@ public class TaskController {
     public String getById(@PathVariable int id, Model model) {
         var taskOptional = taskService.findById(id);
         if (taskOptional.isEmpty()) {
-            model.addAttribute("message", NOT_FOUND_MESSAGE);
-            return "errors/404";
+            model.addAttribute(MESSAGE, NOT_FOUND_MESSAGE);
+            return ERRORS_404;
         }
-        model.addAttribute("task", taskOptional.get());
-        return "tasks/one";
+        model.addAttribute(TASK, taskOptional.get());
+        return TASKS_ONE;
     }
 
     /**
@@ -123,10 +173,10 @@ public class TaskController {
     public String delete(@PathVariable int id, Model model) {
         var isDeleted = taskService.delete(id);
         if (!isDeleted) {
-            model.addAttribute("message", NOT_FOUND_MESSAGE);
-            return "errors/404";
+            model.addAttribute(MESSAGE, NOT_FOUND_MESSAGE);
+            return ERRORS_404;
         }
-        return "redirect:/tasks";
+        return REDIRECT_TASKS;
     }
 
     /**
@@ -138,34 +188,33 @@ public class TaskController {
     @GetMapping("/edit/{id}")
     public String getEditPage(@PathVariable int id, Model model) {
         var taskOptional = taskService.findById(id);
+        if (taskOptional.isEmpty()) {
+            model.addAttribute(MESSAGE, NOT_FOUND_MESSAGE);
+            return ERRORS_404;
+        }
         var priorities = priorityService.findAll();
         var categories = categoryService.findAll();
-        model.addAttribute("priorities", priorities);
-        model.addAttribute("categories", categories);
-        if (taskOptional.isEmpty()) {
-            model.addAttribute("message", NOT_FOUND_MESSAGE);
-            return "errors/404";
-        }
-        model.addAttribute("task", taskOptional.get());
-        return "/tasks/edit";
+        model.addAttribute(PRIORITIES, priorities);
+        model.addAttribute(CATEGORIES, categories);
+        model.addAttribute(TASK, taskOptional.get());
+        return TASKS_EDIT;
     }
 
     /**
      * Отредактировать описание задачи.
-     * @param id ID.
      * @param task задача.
      * @param model модель.
      * @return redirect:/tasks или errors/404.
      */
     @PostMapping("/edit/{id}")
-    public String update(@PathVariable int id, @ModelAttribute Task task, Model model) {
-        task.setId(id);
+    public String update(@ModelAttribute Task task, Model model, HttpServletRequest request) {
+        addCategories(task, request);
         var isUpdated = taskService.update(task);
         if (!isUpdated) {
-            model.addAttribute("message", NOT_FOUND_MESSAGE);
-            return "errors/404";
+            model.addAttribute(MESSAGE, NOT_UPDATED_MESSAGE);
+            return ERRORS_404;
         }
-        return "redirect:/tasks";
+        return REDIRECT_TASKS;
     }
 
     /**
@@ -178,9 +227,9 @@ public class TaskController {
     public String updateStatus(@PathVariable int id, Model model) {
         var isUpdated = taskService.updateStatus(id);
         if (!isUpdated) {
-            model.addAttribute("message", NOT_FOUND_MESSAGE);
-            return "errors/404";
+            model.addAttribute(MESSAGE, NOT_UPDATED_MESSAGE);
+            return ERRORS_404;
         }
-        return "redirect:/tasks";
+        return REDIRECT_TASKS;
     }
 }

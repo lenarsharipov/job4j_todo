@@ -53,14 +53,11 @@ public class TaskStore {
      * @return true/false.
      */
     public boolean update(Task task) {
-        var result = false;
+        var result = true;
         try {
-            result = crudRepository.isExecuted(
-                    "UPDATE Task SET description = :fDescription WHERE id = :fId",
-                    Map.of("fDescription", task.getDescription(),
-                            "fId", task.getId())
-            );
+            crudRepository.run(session -> session.merge(task));
         } catch (Exception exception) {
+            result = false;
             LOG.error("Exception in log example", exception);
         }
         return result;
@@ -93,6 +90,7 @@ public class TaskStore {
         try {
             result = crudRepository.query(
                     """
+                    SELECT DISTINCT t
                     FROM Task t
                     LEFT JOIN FETCH t.priority
                     LEFT JOIN FETCH t.categories
@@ -113,10 +111,12 @@ public class TaskStore {
         try {
             result = crudRepository.query(
                     """
+                          SELECT DISTINCT t
                           FROM Task t
                           LEFT JOIN FETCH t.priority
                           LEFT JOIN FETCH t.categories
-                          WHERE t.done = :fDone ORDER BY t.id ASC
+                          WHERE t.done = :fDone
+                          ORDER BY t.id ASC
                           """, Task.class, Map.of("fDone", done)
             );
         } catch (Exception exception) {
@@ -134,10 +134,12 @@ public class TaskStore {
         try {
             result = crudRepository.query(
                     """
+                    SELECT DISTINCT t
                     FROM Task t
                     LEFT JOIN FETCH t.priority
                     LEFT JOIN FETCH t.categories
-                    WHERE t.created >= :fCreated ORDER BY t.id ASC
+                    WHERE t.created >= :fCreated
+                    ORDER BY t.id ASC
                     """, Task.class,
                     Map.of("fCreated", LocalDateTime.now().minusDays(DAYS_RANGE))
             );
@@ -156,6 +158,7 @@ public class TaskStore {
         Optional<Task> result = Optional.empty();
         try {
             result = crudRepository.optional("""
+                     SELECT DISTINCT t
                      FROM Task t
                      LEFT JOIN FETCH t.priority
                      LEFT JOIN FETCH t.categories

@@ -48,9 +48,9 @@
             </div>
             <div class="mb-3 form-group" >
                 <label><b>Категории</b></label>
-                <select  th:field="*{categories[0].id}" class="form-select" multiple aria-label="multiple select" required>
-                    <option th:each="category : ${categories}" th:text="${category.name}" th:value="${category.id}"></option>
-                </select>
+                    <select name="categoryIds" class="form-select" multiple aria-label="multiple select" required>
+                        <option th:each="category : ${categories}" th:text="${category.name}" th:value="${category.id}"></option>
+                    </select>
             </div>
             <div class="mb-3 row ">
                 <div class="col-6"></div>

@@ -7,11 +7,13 @@ import javax.persistence.*;
 @Entity
 @Table(name = "categories")
 @AllArgsConstructor
-@NoArgsConstructor
+@NoArgsConstructor(force = true)
+@RequiredArgsConstructor
 @Data
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class Category {
 
+    @NonNull
     @EqualsAndHashCode.Include
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

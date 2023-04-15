@@ -7,6 +7,7 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Entity
 @Table(name = "tasks")
@@ -38,11 +39,12 @@ public class Task {
     @JoinColumn(name = "user_id")
     private User user;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(
+            fetch = FetchType.LAZY)
     @JoinColumn(name = "priority_id")
     private Priority priority;
 
-    @ManyToMany(cascade = CascadeType.PERSIST,
+    @ManyToMany(cascade = {CascadeType.PERSIST},
                 fetch = FetchType.LAZY)
     @JoinTable(
             name = "task_category",
@@ -55,4 +57,11 @@ public class Task {
     public String created() {
         return FORMATTER.format(created);
     }
+
+    public String categories() {
+        return categories.stream()
+                .map(Category::getName)
+                .collect(Collectors.joining(", "));
+    }
+
 }

@@ -12,10 +12,11 @@ import ru.job4j.todo.service.CategoryService;
 import ru.job4j.todo.service.PriorityService;
 import ru.job4j.todo.service.TaskService;
 
-import javax.servlet.http.HttpSession;
+import javax.servlet.http.HttpServletRequest;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -44,25 +45,33 @@ class TaskControllerTest {
         priorityService = mock(PriorityService.class);
         categoryService = mock(CategoryService.class);
         taskController = new TaskController(taskService, priorityService, categoryService);
+
         var oldDate = LocalDateTime.of(
                 LocalDate.of(MIN.getYear(), 1, 1),
                 LocalTime.of(0, 0, 0));
+
         admin = new User(1, "admin", "admin", "123456");
+
+
+        categories = new ArrayList<>();
+        categories.add(new Category(1, "Job"));
+        categories.add(new Category(2, "Hobby"));
+        categories.add(new Category(3, "Sport"));
+
         urgently = new Priority();
         urgently.setId(1);
         urgently.setName("urgently");
         urgently.setPosition(1);
-        var category = new Category(1, "Job");
-        categories = List.of(category);
         normal = new Priority();
         normal.setId(2);
         normal.setName("normal");
         normal.setPosition(2);
         urgently.setPosition(1);
-        tasks = List.of(
-                new Task(1, "task1", oldDate, false, admin, urgently, categories),
-                new Task(2, "task2", now(), true, admin, normal, categories),
-                new Task(3, "task3", now(), false, admin, urgently, categories));
+
+        tasks = new ArrayList<>();
+        tasks.add(new Task(1, "task1", oldDate, false, admin, urgently, categories));
+        tasks.add(new Task(2, "task2", now(), true, admin, normal, categories));
+        tasks.add(new Task(3, "task3", now(), false, admin, urgently, categories));
     }
 
     /**
@@ -136,13 +145,14 @@ class TaskControllerTest {
      */
     @Test
     void whenSaveTaskThenSameDataAndRedirectToTasksPage() {
-        var session = mock(HttpSession.class);
-        var task = tasks.get(0);
+        var request = mock(HttpServletRequest.class);
+        var task = new Task(1, "task1", LocalDateTime.now(), false, admin, urgently, categories);
         var taskArgumentCaptor = ArgumentCaptor.forClass(Task.class);
+        when(request.getParameterValues(any())).thenReturn(new String[]{"1", "2", "3"});
         when(taskService.save(taskArgumentCaptor.capture())).thenReturn(Optional.of(task));
 
         var model = new ConcurrentModel();
-        var view = taskController.create(task, model, session);
+        var view = taskController.create(task, model, request);
         var actualTask = taskArgumentCaptor.getValue();
 
         assertThat(view).isEqualTo("redirect:/tasks");
@@ -268,13 +278,14 @@ class TaskControllerTest {
     @Test
     void whenUpdateTaskThenGetTasksPage() {
         var updatedTask = tasks.get(0);
-        var id = updatedTask.getId();
-        updatedTask.setDescription("desc1 UPDATED");
+        var request = mock(HttpServletRequest.class);
+        updatedTask.setDescription("desc UPDATED");
         var taskArgumentCaptor = ArgumentCaptor.forClass(Task.class);
+        when(request.getParameterValues(any())).thenReturn(new String[]{"1", "2", "3"});
         when(taskService.update(taskArgumentCaptor.capture())).thenReturn(true);
 
         var model = new ConcurrentModel();
-        var view = taskController.update(id, updatedTask, model);
+        var view = taskController.update(updatedTask, model, request);
         var actualTask = taskArgumentCaptor.getValue();
 
         assertThat(view).isEqualTo("redirect:/tasks");
@@ -288,14 +299,15 @@ class TaskControllerTest {
     @Test
     void whenUpdateNotExistingTaskThenGetErrorPageWithMessage() {
         var expectedErrorMessage = """
-                Задача с указанными идентификатором не найдена.
+                Задача с указанными идентификатором не обновлена.
                 """;
-        var id = 0;
+        var request = mock(HttpServletRequest.class);
         var taskArgumentCaptor = ArgumentCaptor.forClass(Task.class);
+        when(request.getParameterValues(any())).thenReturn(new String[]{"1", "2", "3"});
         when(taskService.update(taskArgumentCaptor.capture())).thenReturn(false);
 
         var model = new ConcurrentModel();
-        var view = taskController.update(id, new Task(), model);
+        var view = taskController.update(new Task(), model, request);
         var actualErrorMessage = model.getAttribute("message");
 
         assertThat(view).isEqualTo("errors/404");
@@ -326,13 +338,13 @@ class TaskControllerTest {
     @Test
     void whenUpdateNotExistingTaskStatusThenGetErrorPageWithMessage1() {
         var expectedErrorMessage = """
-                Задача с указанными идентификатором не найдена.
+                Задача с указанными идентификатором не обновлена.
                 """;
         var id = 0;
         when(taskService.updateStatus(id)).thenReturn(false);
 
         var model = new ConcurrentModel();
-        var view = taskController.update(id, new Task(), model);
+        var view = taskController.updateStatus(id, model);
         var actualErrorMessage = model.getAttribute("message");
 
         assertThat(view).isEqualTo("errors/404");
