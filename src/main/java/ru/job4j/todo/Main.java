@@ -4,8 +4,8 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 /**
- * Точка входа в программу.
- * URL для работы в браузере: localhost:8080 or localhost:8080/index
+ * Program starting point.
+ * Starting URLs in browser: localhost:8080 or localhost:8080/index
  */
 @SpringBootApplication
 public class Main {

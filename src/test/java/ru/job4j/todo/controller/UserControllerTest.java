@@ -6,6 +6,9 @@ import org.mockito.ArgumentCaptor;
 import org.springframework.ui.ConcurrentModel;
 import ru.job4j.todo.model.User;
 import ru.job4j.todo.service.UserService;
+import ru.job4j.todo.util.Attribute;
+import ru.job4j.todo.util.Message;
+import ru.job4j.todo.util.Page;
 
 import javax.servlet.http.HttpSession;
 import java.util.List;
@@ -22,7 +25,7 @@ class UserControllerTest {
     private List<User> users;
 
     /**
-     * Инициализировать taskService, taskController, списка задач tasks перед каждым тестом.
+     * Init taskService, taskController, List of tasks before each test.
      */
     @BeforeEach
     void setUp() {
@@ -37,11 +40,11 @@ class UserControllerTest {
 
     /**
      * Mock-test getRegistrationPage().
-     * Вывести страницу регистрации.
+     * Get user registration page.
      */
     @Test
     void whenRequestRegistrationPageThenGetIt() {
-        var expectedView = "users/register";
+        var expectedView = Page.USERS_REGISTER;
 
         var view = userController.getRegistrationPage();
 
@@ -50,7 +53,7 @@ class UserControllerTest {
 
     /**
      * Mock-test register().
-     * Создать нового пользователя и перейти на страницу задач.
+     * Create new user and get /tasks page.
      */
     @Test
     void whenAddNewUserThenSameDataAndRedirectToTasksPage() {
@@ -62,35 +65,35 @@ class UserControllerTest {
         var view = userController.register(model, user);
         var actualUser = userArgumentCaptor.getValue();
 
-        assertThat(view).isEqualTo("redirect:/tasks");
+        assertThat(view).isEqualTo(Page.REDIRECT_TASKS);
         assertThat(actualUser).usingRecursiveComparison().isEqualTo(user);
     }
 
     /**
      * Mock-test register().
-     * Перейти на страницу об ошибке, при добавлении пользователя с не уникальным логином.
+     * On failure to register new user with not-unique login get errors/404 page with error message.
      */
     @Test
     void whenAddNewUserWithNotUniqueLoginThenErrorPageWithMessage() {
-        var expectedErrorMessage = "Пользователь с такой почтой уже существует";
+        var expectedErrorMessage = Message.NOT_UNIQUE_LOGIN;
         var user = new User(0, "name111", "login1", "123456");
         when(userService.save(user)).thenReturn(Optional.empty());
 
         var model = new ConcurrentModel();
         var view = userController.register(model, user);
-        var actualErrorMessage = model.getAttribute("message");
+        var actualErrorMessage = model.getAttribute(Attribute.MESSAGE);
 
-        assertThat(view).isEqualTo("errors/404");
+        assertThat(view).isEqualTo(Page.ERRORS_404);
         assertThat(actualErrorMessage).isEqualTo(expectedErrorMessage);
     }
 
     /**
      * Mock-test getLoginPage().
-     * Вывести страницу аутентификации.
+     * Get sign in page.
      */
     @Test
     public void whenRequestLoginPageThenGetIt() {
-        var expectedView = "users/login";
+        var expectedView = Page.USERS_LOGIN;
 
         var view = userController.getLoginPage();
 
@@ -99,7 +102,7 @@ class UserControllerTest {
 
     /**
      * Mock-test loginUser().
-     * Аутентифицироваться и перейти на страницу tasks.
+     * Sign in and get /tasks page.
      */
     @Test
     public void whenRequestToLoginWithCorrectDataThenLoggedInAndRedirectedToTasksPage() {
@@ -111,16 +114,17 @@ class UserControllerTest {
         var model = new ConcurrentModel();
         var view = userController.loginUser(user, model, session);
 
-        assertThat(view).isEqualTo("redirect:/tasks");
+        assertThat(view).isEqualTo(Page.REDIRECT_TASKS);
     }
 
     /**
      * Mock-test loginUser().
-     * При аутентификации пользователя по неверным данным, перейти на страницу с ошибкой.
+     * On failure to sign in with incorrect login or password
+     * get errors/404 page with error message.
      */
     @Test
     public void whenRequestToLoginWithInCorrectDataThenErrorPageWithMessage() {
-        var expectedErrorMessage = "Почта или пароль введены неверно";
+        var expectedErrorMessage = Message.LOGIN_PASSWORD_INCORRECT;
         var user = new User(0, "name", "login", "password");
         var session = mock(HttpSession.class);
         when(userService.findByLoginAndPassword(any(String.class), any(String.class)))
@@ -128,15 +132,15 @@ class UserControllerTest {
 
         var model = new ConcurrentModel();
         var view = userController.loginUser(user, model, session);
-        var actualErrorMessage = model.getAttribute("message");
+        var actualErrorMessage = model.getAttribute(Attribute.MESSAGE);
 
-        assertThat(view).isEqualTo("errors/404");
+        assertThat(view).isEqualTo(Page.ERRORS_404);
         assertThat(actualErrorMessage).isEqualTo(expectedErrorMessage);
     }
 
     /**
      * Mock-test logout().
-     * Выйти из системы и перейти на страницу аутентификации.
+     * Sign out and get redirected to /users/login page.
      */
     @Test
     void whenRequestToLogoutThenLoggedOutAndRedirectedToLoginPage() {
@@ -144,6 +148,6 @@ class UserControllerTest {
 
         var view = userController.logout(session);
 
-        assertThat(view).isEqualTo("redirect:/users/login");
+        assertThat(view).isEqualTo(Page.REDIRECT_USERS_LOGIN);
     }
 }

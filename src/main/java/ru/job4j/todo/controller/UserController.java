@@ -10,12 +10,14 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import ru.job4j.todo.model.User;
 import ru.job4j.todo.service.UserService;
+import ru.job4j.todo.util.Attribute;
+import ru.job4j.todo.util.Message;
+import ru.job4j.todo.util.Page;
 
 import javax.servlet.http.HttpSession;
 
 /**
- * Контроллер UserController.
- *
+ * UserController.
  * @author Lenar Sharipov
  * @version 1.0
  */
@@ -28,66 +30,69 @@ public class UserController {
     private final UserService userService;
 
     /**
-     * Вывести страницу регистрации пользователя.
+     * Get User creation page.
      * @return users/register.
      */
     @GetMapping("/register")
     public String getRegistrationPage() {
-        return "users/register";
+        return Page.USERS_REGISTER;
     }
 
     /**
-     * Зарегистрировать нового пользователя и перейти на /tasks.
-     * @param model модель.
-     * @param user пользователь.
-     * @return redirect:/tasks.
+     * On success register new user and get redirected to /tasks page.
+     * On failure get errors/404 page with error message.
+     * @param model model.
+     * @param user user.
+     * @return redirect:/tasks or errors/404.
      */
     @PostMapping("/register")
     public String register(Model model, @ModelAttribute User user) {
         var optionalUser = userService.save(user);
         if (optionalUser.isEmpty()) {
-            model.addAttribute("message", "Пользователь с такой почтой уже существует");
-            return "errors/404";
+            model.addAttribute(Attribute.MESSAGE, Message.NOT_UNIQUE_LOGIN);
+            return Page.ERRORS_404;
         }
-        model.addAttribute("user", user);
-        return "redirect:/tasks";
+        model.addAttribute(Attribute.USER, user);
+        return Page.REDIRECT_TASKS;
     }
 
     /**
-     * Вывести страницу аутентификации.
+     * Get authentication page.
      * @return users/login.
      */
     @GetMapping("/login")
     public String getLoginPage() {
-        return "users/login";
+        return Page.USERS_LOGIN;
     }
 
     /**
-     * Аутентифицировать пользователя и перейти на страницу tasks.
-     * @param user пользователь.
-     * @param model модель.
-     * @return redirect:/tasks.
+     * Sign in by login and password.
+     * On success get redirected to /tasks page.
+     * On failure get errors/404 page with error message.
+     * @param user user.
+     * @param model model.
+     * @return redirect:/tasks or errors/404.
      */
     @PostMapping("/login")
     public String loginUser(@ModelAttribute User user, Model model, HttpSession session) {
         var userOptional = userService.findByLoginAndPassword(user.getLogin(), user.getPassword());
         if (userOptional.isEmpty()) {
-            model.addAttribute("message", "Почта или пароль введены неверно");
-            return "errors/404";
+            model.addAttribute(Attribute.MESSAGE, Message.LOGIN_PASSWORD_INCORRECT);
+            return Page.ERRORS_404;
         }
-        session.setAttribute("user", userOptional.get());
-        return "redirect:/tasks";
+        session.setAttribute(Attribute.USER, userOptional.get());
+        return Page.REDIRECT_TASKS;
     }
 
     /**
-     * Выйти из системы.
-     * @param session http-сессия.
+     * Log out. And get redirected to redirect:/users/login page.
+     * @param session HttpSession.
      * @return redirect:/users/login.
      */
     @GetMapping("/logout")
     public String logout(HttpSession session) {
         session.invalidate();
-        return "redirect:/users/login";
+        return Page.REDIRECT_USERS_LOGIN;
     }
 
 }

@@ -11,6 +11,9 @@ import ru.job4j.todo.model.User;
 import ru.job4j.todo.service.CategoryService;
 import ru.job4j.todo.service.PriorityService;
 import ru.job4j.todo.service.TaskService;
+import ru.job4j.todo.util.Attribute;
+import ru.job4j.todo.util.Message;
+import ru.job4j.todo.util.Page;
 
 import javax.servlet.http.HttpServletRequest;
 import java.time.LocalDate;
@@ -52,7 +55,6 @@ class TaskControllerTest {
 
         admin = new User(1, "admin", "admin", "123456");
 
-
         categories = new ArrayList<>();
         categories.add(new Category(1, "Job"));
         categories.add(new Category(2, "Hobby"));
@@ -62,11 +64,11 @@ class TaskControllerTest {
         urgently.setId(1);
         urgently.setName("urgently");
         urgently.setPosition(1);
+        urgently.setPosition(1);
         normal = new Priority();
         normal.setId(2);
         normal.setName("normal");
         normal.setPosition(2);
-        urgently.setPosition(1);
 
         tasks = new ArrayList<>();
         tasks.add(new Task(1, "task1", oldDate, false, admin, urgently, categories));
@@ -182,17 +184,15 @@ class TaskControllerTest {
      */
     @Test
     void whenRequestTaskByIllegalIdThenGetErrorPageWithMessage() {
-        var expectedException = new RuntimeException("""
-                                                    Задача с указанными идентификатором не найдена.
-                                                    """);
+        var expectedException = new RuntimeException(Message.TASK_NOT_FOUND);
         var id = 0;
         when(taskService.findById(id)).thenReturn(Optional.empty());
 
         var model = new ConcurrentModel();
         var view = taskController.getById(id, model);
-        var actualExceptionMessage = model.getAttribute("message");
+        var actualExceptionMessage = model.getAttribute(Attribute.MESSAGE);
 
-        assertThat(view).isEqualTo("errors/404");
+        assertThat(view).isEqualTo(Page.ERRORS_404);
         assertThat(actualExceptionMessage).isEqualTo(expectedException.getMessage());
     }
 
@@ -209,7 +209,7 @@ class TaskControllerTest {
         var model = new ConcurrentModel();
         var view = taskController.delete(id, model);
 
-        assertThat(view).isEqualTo("redirect:/tasks");
+        assertThat(view).isEqualTo(Page.REDIRECT_TASKS);
     }
 
     /**
@@ -219,17 +219,15 @@ class TaskControllerTest {
     @Test
     void whenDeleteByIllegalIdThenGetFalseAndErrorPageWithMessage() {
         var isDeleted = false;
-        var expectedException = new RuntimeException("""
-                                                    Задача с указанными идентификатором не найдена.
-                                                    """);
+        var expectedException = new RuntimeException(Message.TASK_NOT_FOUND);
         var id = 0;
         when(taskService.delete(id)).thenReturn(isDeleted);
 
         var model = new ConcurrentModel();
         var view = taskController.delete(id, model);
-        var actualExceptionMessage = model.getAttribute("message");
+        var actualExceptionMessage = model.getAttribute(Attribute.MESSAGE);
 
-        assertThat(view).isEqualTo("errors/404");
+        assertThat(view).isEqualTo(Page.ERRORS_404);
         assertThat(actualExceptionMessage).isEqualTo(expectedException.getMessage());
     }
 
@@ -246,7 +244,7 @@ class TaskControllerTest {
         var model = new ConcurrentModel();
         var view = taskController.getEditPage(id, model);
 
-        assertThat(view).isEqualTo("/tasks/edit");
+        assertThat(view).isEqualTo(Page.TASKS_EDIT);
     }
 
     /**
@@ -255,19 +253,16 @@ class TaskControllerTest {
      */
     @Test
     void whenRequestEditPageOfNotExistingTaskThenGetErrorPageWithMessage() {
-        var expectedErrorMessage =
-                                   """
-                                   Задача с указанными идентификатором не найдена.
-                                   """;
+        var expectedErrorMessage = Message.TASK_NOT_FOUND;
         Optional<Task> expectedOptional = Optional.empty();
         var id = 0;
         when(taskService.findById(0)).thenReturn(expectedOptional);
 
         var model = new ConcurrentModel();
         var view = taskController.getEditPage(id, model);
-        var actualErrorMessage = model.getAttribute("message");
+        var actualErrorMessage = model.getAttribute(Attribute.MESSAGE);
 
-        assertThat(view).isEqualTo("errors/404");
+        assertThat(view).isEqualTo(Page.ERRORS_404);
         assertThat(actualErrorMessage).isEqualTo(expectedErrorMessage);
     }
 
@@ -288,7 +283,7 @@ class TaskControllerTest {
         var view = taskController.update(updatedTask, model, request);
         var actualTask = taskArgumentCaptor.getValue();
 
-        assertThat(view).isEqualTo("redirect:/tasks");
+        assertThat(view).isEqualTo(Page.REDIRECT_TASKS);
         assertThat(actualTask).isEqualTo(updatedTask);
     }
 
@@ -298,9 +293,7 @@ class TaskControllerTest {
      * */
     @Test
     void whenUpdateNotExistingTaskThenGetErrorPageWithMessage() {
-        var expectedErrorMessage = """
-                Задача с указанными идентификатором не обновлена.
-                """;
+        var expectedErrorMessage = Message.TASK_NOT_UPDATED;
         var request = mock(HttpServletRequest.class);
         var taskArgumentCaptor = ArgumentCaptor.forClass(Task.class);
         when(request.getParameterValues(any())).thenReturn(new String[]{"1", "2", "3"});
@@ -308,9 +301,9 @@ class TaskControllerTest {
 
         var model = new ConcurrentModel();
         var view = taskController.update(new Task(), model, request);
-        var actualErrorMessage = model.getAttribute("message");
+        var actualErrorMessage = model.getAttribute(Attribute.MESSAGE);
 
-        assertThat(view).isEqualTo("errors/404");
+        assertThat(view).isEqualTo(Page.ERRORS_404);
         assertThat(actualErrorMessage).isEqualTo(expectedErrorMessage);
     }
 
@@ -328,7 +321,7 @@ class TaskControllerTest {
         var model = new ConcurrentModel();
         var view = taskController.updateStatus(id, model);
 
-        assertThat(view).isEqualTo("redirect:/tasks");
+        assertThat(view).isEqualTo(Page.REDIRECT_TASKS);
     }
 
     /**
@@ -337,17 +330,15 @@ class TaskControllerTest {
      */
     @Test
     void whenUpdateNotExistingTaskStatusThenGetErrorPageWithMessage1() {
-        var expectedErrorMessage = """
-                Задача с указанными идентификатором не обновлена.
-                """;
+        var expectedErrorMessage = Message.TASK_NOT_UPDATED;
         var id = 0;
         when(taskService.updateStatus(id)).thenReturn(false);
 
         var model = new ConcurrentModel();
         var view = taskController.updateStatus(id, model);
-        var actualErrorMessage = model.getAttribute("message");
+        var actualErrorMessage = model.getAttribute(Attribute.MESSAGE);
 
-        assertThat(view).isEqualTo("errors/404");
+        assertThat(view).isEqualTo(Page.ERRORS_404);
         assertThat(actualErrorMessage).isEqualTo(expectedErrorMessage);
     }
 

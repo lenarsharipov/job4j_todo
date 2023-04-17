@@ -9,7 +9,7 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.min.js" integrity="sha384-cuYeSxntonz0PPNlHhBs68uyIAVpIIOZZ5JqeqvYYIcEL727kskC66kF92t6Xl2V" crossorigin="anonymous"></script>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.2/font/bootstrap-icons.css">
 
-    <title>Задача</title>
+    <title>Task</title>
 </head>
 <body>
     <div class="container-fluid p-0">
@@ -18,16 +18,16 @@
                 <a class="navbar-brand" href="/">TODO LIST</a>
                 <div class="collapse navbar-collapse">
                     <div class="navbar-nav me-auto">
-                        <a class="nav-item nav-link" href="/">Главная</a>
-                        <a class="nav-item nav-link" th:href="@{/tasks}">Задачи</a>
+                        <a class="nav-item nav-link" href="/">Home</a>
+                        <a class="nav-item nav-link" th:href="@{/tasks}">Tasks</a>
                     </div>
-                    <div class="d-flex" th:if="${user.name == 'Гость'}">
-                        <a class="nav-link text-secondary me-3" th:href="@{/users/register}">Регистрация</a>
-                        <a class="nav-link text-secondary" th:href="@{/users/login}">Войти</a>
+                    <div class="d-flex" th:if="${user.name == 'Guest'}">
+                        <a class="nav-link text-secondary me-3" th:href="@{/users/register}">Registration</a>
+                        <a class="nav-link text-secondary" th:href="@{/users/login}">Log in</a>
                     </div>
-                    <div class="d-flex" th:if="${user.name != 'Гость'}">
+                    <div class="d-flex" th:if="${user.name != 'Guest'}">
                         <a class="nav-link text-secondary me-3" href="#" th:text="${user.name}"></a>
-                        <a class="nav-link text-secondary" th:href="@{/users/logout}">Выйти</a>
+                        <a class="nav-link text-secondary" th:href="@{/users/logout}">Log out</a>
                     </div>
                 </div>
             </div>
@@ -39,35 +39,35 @@
                     <thead>
                     <tr>
                         <th scope="col">Id</th>
-                        <th scope="col">Описание</th>
-                        <th scope="col">Категория</th>
-                        <th scope="col">Дата создания</th>
-                        <th scope="col">Статус</th>
-                        <th scope="col">Приоритет</th>
-                        <th scope="col">Операции</th>
+                        <th scope="col">Description</th>
+                        <th scope="col">Categories</th>
+                        <th scope="col">Created at</th>
+                        <th scope="col">Status</th>
+                        <th scope="col">Priority</th>
+                        <th scope="col"></th>
                     </tr>
                     </thead>
                     <tbody>
                     <tr>
                         <td th:text="${task.id}" />
                         <td th:text="${task.description}" />
-                        <td th:text="${task.categories}"></td>
+                        <td th:text="${task.categories()}"></td>
                         <td th:text="${task.created()}" />
                         <td>
-                            <span th:if="${task.done}">Выполнено</span>
-                            <span th:if="${!task.done}">В процессе</span>
+                            <span th:if="${task.done}">Completed</span>
+                            <span th:if="${!task.done}">In progress</span>
                         </td>
                         <td th:text="${task.priority.name}"/>
                         <td>
                             <div>
                                 <span th:if="${task.done}">
-                                    <a class="btn btn-success btn-sm disabled" role="button" aria-disabled="true">Выполнено</a>
+                                    <a class="btn btn-success btn-sm disabled" role="button" aria-disabled="true">Completed</a>
                                 </span>
                                 <span th:if="${!task.done}">
-                                    <a class="btn btn-outline-success btn-sm" role="button" th:href="@{/tasks/complete/{taskId}(taskId=${task.id})}">Выполнено</a>
+                                    <a class="btn btn-outline-success btn-sm" role="button" th:href="@{/tasks/complete/{taskId}(taskId=${task.id})}">Completed</a>
                                 </span>
-                                <a class="btn btn-outline-warning btn-sm" role="button" th:href="@{/tasks/edit/{taskId}(taskId=${task.id})}">Отредактировать</a>
-                                <a class="btn btn-outline-danger btn-sm" role="button" th:href="@{/tasks/delete/{taskId}(taskId=${task.id})}">Удалить</a>
+                                <a class="btn btn-outline-warning btn-sm" role="button" th:href="@{/tasks/edit/{taskId}(taskId=${task.id})}">Edit</a>
+                                <a class="btn btn-outline-danger btn-sm" role="button" th:href="@{/tasks/delete/{taskId}(taskId=${task.id})}">Delete</a>
                             </div>
                         </td>
                     </tr>

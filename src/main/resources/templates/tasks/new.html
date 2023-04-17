@@ -10,7 +10,7 @@
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.min.js" integrity="sha384-cuYeSxntonz0PPNlHhBs68uyIAVpIIOZZ5JqeqvYYIcEL727kskC66kF92t6Xl2V" crossorigin="anonymous"></script>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.2/font/bootstrap-icons.css">
 
-  <title>Задача</title>
+  <title>Task</title>
 </head>
 <body>
 <div class="container-fluid p-0">
@@ -19,16 +19,16 @@
       <a class="navbar-brand" href="/">TODO LIST</a>
       <div class="collapse navbar-collapse">
         <div class="navbar-nav me-auto">
-          <a class="nav-item nav-link" href="/">Главная</a>
-          <a class="nav-item nav-link active" th:href="@{/tasks}">Задачи</a>
+          <a class="nav-item nav-link" href="/">Home</a>
+          <a class="nav-item nav-link active" th:href="@{/tasks}">Tasks</a>
         </div>
-        <div class="d-flex" th:if="${user.name == 'Гость'}">
-          <a class="nav-link text-secondary me-3" th:href="@{/users/register}">Регистрация</a>
-          <a class="nav-link text-secondary" th:href="@{/users/login}">Войти</a>
+        <div class="d-flex" th:if="${user.name == 'Guest'}">
+          <a class="nav-link text-secondary me-3" th:href="@{/users/register}">Registration</a>
+          <a class="nav-link text-secondary" th:href="@{/users/login}">Log in</a>
         </div>
-        <div class="d-flex" th:if="${user.name != 'Гость'}">
+        <div class="d-flex" th:if="${user.name != 'Guest'}">
           <a class="nav-link text-secondary me-3" href="#" th:text="${user.name}"></a>
-          <a class="nav-link text-secondary" th:href="@{/users/logout}">Выйти</a>
+          <a class="nav-link text-secondary" th:href="@{/users/logout}">Log out</a>
         </div>
       </div>
     </div>
@@ -37,10 +37,10 @@
   <div class="container">
 
     <div class="mt-4">
-      <a class="btn btn-outline-danger btn-sm me-1" role="button" th:href="@{/tasks/create}">Добавить задачу</a>
-      <a class="btn btn-outline-primary btn-sm me-1" role="button" th:href="@{/tasks}">Показать все задачи</a>
-      <a class="btn btn-outline-primary btn-sm me-1" role="button" th:href="@{/tasks/completed}">Показать выполненные задачи</a>
-      <a class="btn btn-primary btn-sm disabled" role="button" aria-disabled="true">Показать новые задачи</a>
+      <a class="btn btn-outline-danger btn-sm me-1" role="button" th:href="@{/tasks/create}">Add new task</a>
+      <a class="btn btn-outline-primary btn-sm me-1" role="button" th:href="@{/tasks}">Show all tasks</a>
+      <a class="btn btn-outline-primary btn-sm me-1" role="button" th:href="@{/tasks/completed}">Show completed tasks</a>
+      <a class="btn btn-primary btn-sm disabled" role="button" aria-disabled="true">Show new tasks</a>
     </div>
 
     <div class="mt-4 row">
@@ -48,12 +48,12 @@
         <thead>
         <tr>
           <th scope="col">Id</th>
-          <th scope="col">Описание</th>
-          <th scope="col">Категория</th>
-          <th scope="col">Дата создания</th>
-          <th scope="col">Статус</th>
-          <th scope="col">Приоритет</th>
-          <th scope="col">Добавил</th>
+          <th scope="col">Description</th>
+          <th scope="col">Category</th>
+          <th scope="col">Created at</th>
+          <th scope="col">Status</th>
+          <th scope="col">Priority</th>
+          <th scope="col">Added by</th>
           <th scope="col"></th>
         </tr>
         </thead>
@@ -64,13 +64,13 @@
           <td th:text="${task.categories()}"></td>
           <td th:text="${task.created()}"/>
           <td>
-            <span th:if="${task.done}">Выполнено</span>
-            <span th:if="${!task.done}">В процессе</span>
+            <span th:if="${task.done}">Completed</span>
+            <span th:if="${!task.done}">In progress</span>
           </td>
           <td th:text="${task.priority.name}"/>
           <td th:text="${task.user.login}"/>
           <td>
-            <a class="btn btn-outline-danger btn-sm" role="button" th:href="@{/tasks/delete/{taskId}(taskId=${task.id})}">Удалить</a>
+            <a class="btn btn-outline-danger btn-sm" role="button" th:href="@{/tasks/delete/{taskId}(taskId=${task.id})}">Delete</a>
           </td>
         </tr>
         </tbody>

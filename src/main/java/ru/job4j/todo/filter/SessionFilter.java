@@ -29,7 +29,7 @@ public class SessionFilter extends HttpFilter {
         var user = (User) session.getAttribute("user");
         if (user == null) {
             user = new User();
-            user.setName("Гость");
+            user.setName("Guest");
         }
         request.setAttribute("user", user);
     }

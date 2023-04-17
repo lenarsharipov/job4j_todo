@@ -11,12 +11,16 @@ import ru.job4j.todo.model.User;
 import ru.job4j.todo.service.CategoryService;
 import ru.job4j.todo.service.PriorityService;
 import ru.job4j.todo.service.TaskService;
+import ru.job4j.todo.util.Attribute;
+import ru.job4j.todo.util.Message;
+import ru.job4j.todo.util.Page;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
- * Контроллер TaskController
- *
+ * TaskController
  * @author Lenar Sharipov
  * @version 1.0
  */
@@ -26,101 +30,64 @@ import javax.servlet.http.HttpServletRequest;
 @RequestMapping("/tasks")
 @AllArgsConstructor
 public class TaskController {
-
-    /**
-     ******************** MESSAGES ************************
-     */
-    private static final String TASK_NOT_FOUND = """
-            Задача с указанными идентификатором не найдена.
-            """;
-    private static final String TASK_NOT_SAVED = """
-            Задача с указанными идентификатором не сохранена.
-            """;
-    private static final String TASK_NOT_UPDATED = """
-            Задача с указанными идентификатором не обновлена.
-            """;
-
-    /**
-     ******************** PAGES ************************
-     */
-    private static final String ERRORS_404 = "errors/404";
-    private static final String REDIRECT_TASKS = "redirect:/tasks";
-    private static final String TASKS_LIST = "tasks/list";
-    private static final String TASKS_COMPLETED = "tasks/completed";
-    private static final String TASKS_NEW = "tasks/new";
-    private static final String TASKS_CREATE = "tasks/create";
-    private static final String TASKS_ONE = "tasks/one";
-    private static final String TASKS_EDIT = "/tasks/edit";
-
-    /**
-     ******************** ATTRIBUTES ************************
-     */
-    private static final String MESSAGE = "message";
-    private static final String TASKS = "tasks";
-    private static final String TASK = "task";
-    private static final String USER = "user";
-    private static final String CATEGORIES = "categories";
-    private static final String PRIORITIES = "priorities";
-    private static final String CATEGORY_IDS = "categoryIds";
-
     private static final boolean FLAG = true;
-
     private final TaskService taskService;
     private final PriorityService priorityService;
     private final CategoryService categoryService;
 
     /**
-     * Вывести страницу со всеми задачами.
-     * @param model модель.
+     * List all existing tasks.
+     * @param model model.
      * @return tasks/list.
      */
     @GetMapping()
     public String getAll(Model model) {
-        model.addAttribute(TASKS, taskService.findAll());
-        return TASKS_LIST;
+        model.addAttribute(Attribute.TASKS, taskService.findAll());
+        return Page.TASKS_LIST;
     }
 
     /**
-     * Вывести страницу с завершенными задачами.
-     * @param model модель.
+     * List all completed tasks existing in DB.
+     * @param model model.
      * @return tasks/completed.
      */
     @GetMapping("/completed")
     public String getCompleted(Model model) {
-        model.addAttribute(TASKS, taskService.findAllCompleted(FLAG));
-        return TASKS_COMPLETED;
+        model.addAttribute(Attribute.TASKS, taskService.findAllCompleted(FLAG));
+        return Page.TASKS_COMPLETED;
     }
 
     /**
-     * Вывести страницу с новыми задачами.
-     * @param model модель.
+     * List all new tasks existing in DB.
+     * @param model model.
      * @return tasks/new.
      */
     @GetMapping("/new")
     public String getNew(Model model) {
-        model.addAttribute(TASKS, taskService.findAllNew());
-        return TASKS_NEW;
+        model.addAttribute(Attribute.TASKS, taskService.findAllNew());
+        return Page.TASKS_NEW;
     }
 
     /**
-     * Перейти на страницу создания задачи.
+     * Get Task creation page.
      * @return tasks/create.
      */
     @GetMapping({"/", "/create"})
     public String getCreationPage(Model model) {
-        model.addAttribute(TASK, new Task());
-        model.addAttribute(PRIORITIES, priorityService.findAll());
-        model.addAttribute(CATEGORIES, categoryService.findAll());
-        return TASKS_CREATE;
+        model.addAttribute(Attribute.TASK, new Task());
+        model.addAttribute(Attribute.PRIORITIES, priorityService.findAll());
+        model.addAttribute(Attribute.CATEGORIES, categoryService.findAll());
+        return Page.TASKS_CREATE;
     }
 
     /**
-     * Перевести ID полученных категорий из массива строк в массив int и добавить в Task.
-     * @param task задача
-     * @param request HttpServletRequest
+     * Convert array of Strings into array of Integers.
+     * Map new Categories with ids from Integer array.
+     * @param task task.
+     * @param request HttpServletRequest.
      */
     private void addCategories(Task task, HttpServletRequest request) {
-        var categoryIds = request.getParameterValues(CATEGORY_IDS);
+        var categoryIds = request.getParameterValues(Attribute.CATEGORY_IDS);
         for (var categoryId : categoryIds) {
             var id = Integer.parseInt(categoryId);
             task.getCategories().add(new Category(id));
@@ -128,108 +95,134 @@ public class TaskController {
     }
 
     /**
-     * Создать задачу и перейти на страницу /tasks.
-     * @param model модель.
-     * @param task создаваемая задача.
+     * Create new task and save it in DB. Then get redirected to /tasks page.
+     * On success get redirected to /tasks page.
+     * On failure get errors/404 page with error message.
+     * @param model model.
+     * @param task new task.
      * @return "redirect:/tasks".
      */
     @PostMapping("/create")
     public String create(Task task, Model model, HttpServletRequest request) {
-        var user = (User) request.getAttribute(USER);
+        var user = (User) request.getAttribute(Attribute.USER);
         task.setUser(user);
         addCategories(task, request);
         var taskOptional = taskService.save(task);
         if (taskOptional.isEmpty()) {
-            model.addAttribute(MESSAGE, TASK_NOT_SAVED);
-            return ERRORS_404;
+            model.addAttribute(Attribute.MESSAGE, Message.TASK_NOT_SAVED);
+            return Page.ERRORS_404;
         }
-        return REDIRECT_TASKS;
+        return Page.REDIRECT_TASKS;
     }
 
     /**
-     * Перейти на страницу задачи.
+     * Get task's page. Task specified by ID.
+     * On success get /tasks/one page.
+     * On failure get errors/404 page with error message.
      * @param id ID.
-     * @param model модель.
-     * @return "tasks/one" или "errors/404".
+     * @param model model.
+     * @return "tasks/one" or "errors/404".
      */
     @GetMapping("/{id}")
     public String getById(@PathVariable int id, Model model) {
         var taskOptional = taskService.findById(id);
         if (taskOptional.isEmpty()) {
-            model.addAttribute(MESSAGE, TASK_NOT_FOUND);
-            return ERRORS_404;
+            model.addAttribute(Attribute.MESSAGE, Message.TASK_NOT_FOUND);
+            return Page.ERRORS_404;
         }
-        model.addAttribute(TASK, taskOptional.get());
-        return TASKS_ONE;
+        model.addAttribute(Attribute.TASK, taskOptional.get());
+        return Page.TASKS_ONE;
     }
 
     /**
-     * Удалить задачу и перейти на страницу задач.
+     * Delete Task by specified ID. Then get redirected to /tasks page.
+     * On success get redirected to /tasks page.
+     * On failure get errors/404 page with error message.
      * @param id ID.
-     * @param model модель.
-     * @return redirect:/tasks или errors/404.
+     * @param model model.
+     * @return redirect:/tasks or errors/404.
      */
     @GetMapping("/delete/{id}")
     public String delete(@PathVariable int id, Model model) {
         var isDeleted = taskService.delete(id);
         if (!isDeleted) {
-            model.addAttribute(MESSAGE, TASK_NOT_FOUND);
-            return ERRORS_404;
+            model.addAttribute(Attribute.MESSAGE, Message.TASK_NOT_FOUND);
+            return Page.ERRORS_404;
         }
-        return REDIRECT_TASKS;
+        return Page.REDIRECT_TASKS;
     }
 
     /**
-     * Перейти на страницу редактирования задачи, которая будет отредактирована.
+     * Util method that retrieves IDs from passed task categories.
+     * @param categories task categories.
+     * @return list of selected category Ids.
+     */
+    private List<Integer> getCategoryIds(List<Category> categories) {
+        return categories.stream()
+                .map(Category::getId)
+                .collect(Collectors.toList());
+    }
+
+    /**
+     * Get task's edit page. Task specified by ID.
+     * On success get /tasks/edit page.
+     * On failure get errors/404 page with error message.
      * @param id ID.
-     * @param model модель.
-     * @return errors/404 или tasks/edit.
+     * @param model model.
+     * @return errors/404 or tasks/edit.
      */
     @GetMapping("/edit/{id}")
     public String getEditPage(@PathVariable int id, Model model) {
         var taskOptional = taskService.findById(id);
         if (taskOptional.isEmpty()) {
-            model.addAttribute(MESSAGE, TASK_NOT_FOUND);
-            return ERRORS_404;
+            model.addAttribute(Attribute.MESSAGE, Message.TASK_NOT_FOUND);
+            return Page.ERRORS_404;
         }
         var priorities = priorityService.findAll();
         var categories = categoryService.findAll();
-        model.addAttribute(PRIORITIES, priorities);
-        model.addAttribute(CATEGORIES, categories);
-        model.addAttribute(TASK, taskOptional.get());
-        return TASKS_EDIT;
+        var task = taskOptional.get();
+        var selectedIds = getCategoryIds(task.getCategories());
+        model.addAttribute(Attribute.SELECTED_IDS, selectedIds);
+        model.addAttribute(Attribute.TASK, task);
+        model.addAttribute(Attribute.PRIORITIES, priorities);
+        model.addAttribute(Attribute.CATEGORIES, categories);
+        return Page.TASKS_EDIT;
     }
 
     /**
-     * Отредактировать описание задачи.
-     * @param task задача.
-     * @param model модель.
-     * @return redirect:/tasks или errors/404.
+     * Edit and Update specified Task.
+     * On success get redirected to /tasks page.
+     * On failure get errors/404 page with error message.
+     * @param task task.
+     * @param model model.
+     * @return redirect:/tasks or errors/404.
      */
     @PostMapping("/edit/{id}")
     public String update(@ModelAttribute Task task, Model model, HttpServletRequest request) {
         addCategories(task, request);
         var isUpdated = taskService.update(task);
         if (!isUpdated) {
-            model.addAttribute(MESSAGE, TASK_NOT_UPDATED);
-            return ERRORS_404;
+            model.addAttribute(Attribute.MESSAGE, Message.TASK_NOT_UPDATED);
+            return Page.ERRORS_404;
         }
-        return REDIRECT_TASKS;
+        return Page.REDIRECT_TASKS;
     }
 
     /**
-     * Обновить статус с "В процессе" на "Выполнено".
+     * Update task status. Change it only from "In progress" to "Completed".
+     * On success get redirected to /tasks page.
+     * On failure get errors/404 page with error message.
      * @param id ID.
-     * @param model модель.
-     * @return redirect:/tasks или errors/404.
+     * @param model model.
+     * @return redirect:/tasks or errors/404.
      */
     @GetMapping("/complete/{id}")
     public String updateStatus(@PathVariable int id, Model model) {
         var isUpdated = taskService.updateStatus(id);
         if (!isUpdated) {
-            model.addAttribute(MESSAGE, TASK_NOT_UPDATED);
-            return ERRORS_404;
+            model.addAttribute(Attribute.MESSAGE, Message.TASK_NOT_UPDATED);
+            return Page.ERRORS_404;
         }
-        return REDIRECT_TASKS;
+        return Page.REDIRECT_TASKS;
     }
 }
