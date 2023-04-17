@@ -116,7 +116,7 @@ public class TaskController {
     }
 
     /**
-     * Get task's page. Task specified by ID.
+     * Get task page. Task specified by ID.
      * On success get /tasks/one page.
      * On failure get errors/404 page with error message.
      * @param id ID.
