@@ -61,7 +61,9 @@
                 <tbody>
                 <tr th:each="task: ${tasks}">
                     <td th:text="${task.id}" />
-                    <td><a th:text="${task.description}" th:href="@{/tasks/{taskId}(taskId=${task.id})}"></a></td>
+                    <td><a th:if="${task.user.login == user.login}" th:text="${task.description}" th:href="@{/tasks/{taskId}(taskId=${task.id})}"></a>
+                        <span th:if="${task.user.login != user.login}" th:text="${task.description}"></span>
+                    </td>
                     <td th:text="${task.categories()}"></td>
                     <td th:text="${task.created()}"/>
                     <td>
@@ -71,7 +73,8 @@
                     <td th:text="${task.priority.name}"/>
                     <td th:text="${task.user.login}"/>
                     <td>
-                        <a class="btn btn-outline-danger btn-sm" role="button" th:href="@{/tasks/delete/{taskId}(taskId=${task.id})}">Delete</a>
+                        <a th:if="${task.user.login == user.login}" class="btn btn-outline-danger btn-sm" role="button" th:href="@{/tasks/delete/{taskId}(taskId=${task.id})}">Delete</a>
+                        <a th:if="${task.user.login != user.login}" class="btn btn-outline-danger btn-sm disabled" role="button" th:href="@{/tasks/delete/{taskId}(taskId=${task.id})}">Delete</a>
                     </td>
                 </tr>
                 </tbody>
