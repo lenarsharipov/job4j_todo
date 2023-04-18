@@ -61,7 +61,8 @@
                 <tbody>
                 <tr th:each="task: ${tasks}">
                     <td th:text="${task.id}" />
-                    <td><a th:if="${task.user.login == user.login}" th:text="${task.description}" th:href="@{/tasks/{taskId}(taskId=${task.id})}"></a>
+                    <td>
+                        <a th:if="${task.user.login == user.login}" th:text="${task.description}" th:href="@{/tasks/{taskId}(taskId=${task.id})}"></a>
                         <span th:if="${task.user.login != user.login}" th:text="${task.description}"></span>
                     </td>
                     <td th:text="${task.categories()}"></td>
