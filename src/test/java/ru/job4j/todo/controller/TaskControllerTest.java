@@ -53,7 +53,7 @@ class TaskControllerTest {
                 LocalDate.of(MIN.getYear(), 1, 1),
                 LocalTime.of(0, 0, 0));
 
-        admin = new User(1, "admin", "admin", "123456");
+        admin = new User(1, "admin", "admin", "123456", "UTC");
 
         categories = new ArrayList<>();
         categories.add(new Category(1, "Job"));
@@ -83,10 +83,12 @@ class TaskControllerTest {
     @Test
     void whenRequestTaskListPageThenGetPageWithTasksOrderedByIdAsc() {
         var expectedTasks = tasks;
+        var request = mock(HttpServletRequest.class);
+        when(request.getAttribute("user")).thenReturn(admin);
         when(taskService.findAll()).thenReturn(expectedTasks);
 
         var model = new ConcurrentModel();
-        var view = taskController.getAll(model);
+        var view = taskController.getAll(model, request);
         var actualTasks = model.getAttribute("tasks");
 
         assertThat(view).isEqualTo("tasks/list");
@@ -100,10 +102,12 @@ class TaskControllerTest {
     @Test
     void whenRequestCompletedTaskListThenGetPageWithTasksOrderedByIdAsc() {
         var expectedTasks = List.of(tasks.get(1));
+        var request = mock(HttpServletRequest.class);
+        when(request.getAttribute("user")).thenReturn(admin);
         when(taskService.findAllCompleted(true)).thenReturn(expectedTasks);
 
         var model = new ConcurrentModel();
-        var view = taskController.getCompleted(model);
+        var view = taskController.getCompleted(model, request);
         var actualTasks = model.getAttribute("tasks");
 
         assertThat(view).isEqualTo("tasks/completed");
@@ -117,10 +121,12 @@ class TaskControllerTest {
     @Test
     void whenRequestNewTaskListThenGetPageWithNewTasksOrderedByIdAsc() {
         var expectedTasks = List.of(tasks.get(1), tasks.get(2));
+        var request = mock(HttpServletRequest.class);
+        when(request.getAttribute("user")).thenReturn(admin);
         when(taskService.findAllNew()).thenReturn(expectedTasks);
 
         var model = new ConcurrentModel();
-        var view = taskController.getNew(model);
+        var view = taskController.getNew(model, request);
         var actualTasks = model.getAttribute("tasks");
 
         assertThat(view).isEqualTo("tasks/new");
@@ -168,10 +174,12 @@ class TaskControllerTest {
     @Test
     void whenRequestTaskByIdThenGetTaskPage() {
         var expectedTask = Optional.of(tasks.get(0));
+        var request = mock(HttpServletRequest.class);
+        when(request.getAttribute("user")).thenReturn(admin);
         when(taskService.findById(1)).thenReturn(expectedTask);
 
         var model = new ConcurrentModel();
-        var view = taskController.getById(1, model);
+        var view = taskController.getById(1, model, request);
         var actualTask = model.getAttribute("task");
 
         assertThat(view).isEqualTo("tasks/one");
@@ -185,11 +193,12 @@ class TaskControllerTest {
     @Test
     void whenRequestTaskByIllegalIdThenGetErrorPageWithMessage() {
         var expectedException = new RuntimeException(Message.TASK_NOT_FOUND);
+        var request = mock(HttpServletRequest.class);
         var id = 0;
         when(taskService.findById(id)).thenReturn(Optional.empty());
 
         var model = new ConcurrentModel();
-        var view = taskController.getById(id, model);
+        var view = taskController.getById(id, model, request);
         var actualExceptionMessage = model.getAttribute(Attribute.MESSAGE);
 
         assertThat(view).isEqualTo(Page.ERRORS_404);

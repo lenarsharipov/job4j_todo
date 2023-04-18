@@ -14,4 +14,6 @@ public class Attribute {
     public static final String PRIORITIES = "priorities";
     public static final String CATEGORY_IDS = "categoryIds";
     public static final String SELECTED_IDS = "selectedIds";
+    public static final String TIMEZONES = "timezones";
+
 }

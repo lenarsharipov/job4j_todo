@@ -14,6 +14,7 @@ import ru.job4j.todo.service.TaskService;
 import ru.job4j.todo.util.Attribute;
 import ru.job4j.todo.util.Message;
 import ru.job4j.todo.util.Page;
+import ru.job4j.todo.util.TimezoneUtil;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
@@ -41,8 +42,10 @@ public class TaskController {
      * @return tasks/list.
      */
     @GetMapping()
-    public String getAll(Model model) {
-        model.addAttribute(Attribute.TASKS, taskService.findAll());
+    public String getAll(Model model, HttpServletRequest request) {
+        var tasks = taskService.findAll();
+        tasks.forEach(t -> TimezoneUtil.convertTaskTime(t, request));
+        model.addAttribute(Attribute.TASKS, tasks);
         return Page.TASKS_LIST;
     }
 
@@ -52,8 +55,10 @@ public class TaskController {
      * @return tasks/completed.
      */
     @GetMapping("/completed")
-    public String getCompleted(Model model) {
-        model.addAttribute(Attribute.TASKS, taskService.findAllCompleted(FLAG));
+    public String getCompleted(Model model, HttpServletRequest request) {
+        var tasks = taskService.findAllCompleted(FLAG);
+        tasks.forEach(t -> TimezoneUtil.convertTaskTime(t, request));
+        model.addAttribute(Attribute.TASKS, tasks);
         return Page.TASKS_COMPLETED;
     }
 
@@ -63,8 +68,10 @@ public class TaskController {
      * @return tasks/new.
      */
     @GetMapping("/new")
-    public String getNew(Model model) {
-        model.addAttribute(Attribute.TASKS, taskService.findAllNew());
+    public String getNew(Model model, HttpServletRequest request) {
+        var tasks = taskService.findAllNew();
+        tasks.forEach(t -> TimezoneUtil.convertTaskTime(t, request));
+        model.addAttribute(Attribute.TASKS, tasks);
         return Page.TASKS_NEW;
     }
 
@@ -124,13 +131,15 @@ public class TaskController {
      * @return "tasks/one" or "errors/404".
      */
     @GetMapping("/{id}")
-    public String getById(@PathVariable int id, Model model) {
+    public String getById(@PathVariable int id, Model model, HttpServletRequest request) {
         var taskOptional = taskService.findById(id);
         if (taskOptional.isEmpty()) {
             model.addAttribute(Attribute.MESSAGE, Message.TASK_NOT_FOUND);
             return Page.ERRORS_404;
         }
-        model.addAttribute(Attribute.TASK, taskOptional.get());
+        var task = taskOptional.get();
+        TimezoneUtil.convertTaskTime(task, request);
+        model.addAttribute(Attribute.TASK, task);
         return Page.TASKS_ONE;
     }
 

@@ -13,6 +13,7 @@ import ru.job4j.todo.service.UserService;
 import ru.job4j.todo.util.Attribute;
 import ru.job4j.todo.util.Message;
 import ru.job4j.todo.util.Page;
+import ru.job4j.todo.util.TimezoneUtil;
 
 import javax.servlet.http.HttpSession;
 
@@ -34,7 +35,8 @@ public class UserController {
      * @return users/register.
      */
     @GetMapping("/register")
-    public String getRegistrationPage() {
+    public String getRegistrationPage(Model model) {
+        model.addAttribute(Attribute.TIMEZONES, TimezoneUtil.TIMEZONES);
         return Page.USERS_REGISTER;
     }
 

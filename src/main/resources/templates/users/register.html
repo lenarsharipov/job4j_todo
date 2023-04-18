@@ -41,8 +41,18 @@
         <input type="login" class="form-control" id="login" name="login" placeholder="Login" required>
       </div>
       <div class="mb-3">
-        <label for="password" class="form-label"><b>Пароль</b></label>
+        <label for="password" class="form-label"><b>Password</b></label>
         <input type="password" class="form-control" id="password" name="password" placeholder="Password" required>
+      </div>
+      <div class="mb-3 form-group" >
+        <label for="timezone"><b>Timezone</b></label>
+        <select id="timezone" name="timezone" class="form-control">
+          <option th:each="zone : ${timezones}"
+                  th:text="${zone.getID() + ' : ' + zone.getDisplayName()}"
+                  th:value="${zone.getID()}"
+                  th:selected="${zone.getID() == 'UTC'}">
+          </option>
+        </select>
       </div>
       <div class="mb-3 row">
         <div class="col-6"></div>

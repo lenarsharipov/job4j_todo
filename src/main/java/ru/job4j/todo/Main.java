@@ -2,6 +2,10 @@ package ru.job4j.todo;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import ru.job4j.todo.util.TimezoneUtil;
+
+import javax.annotation.PostConstruct;
+import java.util.TimeZone;
 
 /**
  * Program starting point.
@@ -9,6 +13,12 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
  */
 @SpringBootApplication
 public class Main {
+
+    @PostConstruct
+    void initTimeZone() {
+        TimeZone.setDefault(TimeZone.getTimeZone(TimezoneUtil.DEFAULT_TIMEZONE_ID));
+    }
+
     public static void main(String[] args) {
         SpringApplication.run(Main.class, args);
     }

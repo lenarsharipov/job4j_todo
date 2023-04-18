@@ -32,10 +32,10 @@ class UserControllerTest {
         userService = mock(UserService.class);
         userController = new UserController(userService);
         users = List.of(
-                new User(1, "name1", "login1", "123456"),
-                new User(2, "name2", "login2", "123456"),
-                new User(3, "name3", "login3", "123456"),
-                new User(4, "name4", "login4", "123456"));
+                new User(1, "name1", "login1", "123456", "UTC"),
+                new User(2, "name2", "login2", "123456", "UTC"),
+                new User(3, "name3", "login3", "123456", "UTC"),
+                new User(4, "name4", "login4", "123456", "UTC"));
     }
 
     /**
@@ -46,7 +46,8 @@ class UserControllerTest {
     void whenRequestRegistrationPageThenGetIt() {
         var expectedView = Page.USERS_REGISTER;
 
-        var view = userController.getRegistrationPage();
+        var model = new ConcurrentModel();
+        var view = userController.getRegistrationPage(model);
 
         assertThat(view).isEqualTo(expectedView);
     }
@@ -76,7 +77,7 @@ class UserControllerTest {
     @Test
     void whenAddNewUserWithNotUniqueLoginThenErrorPageWithMessage() {
         var expectedErrorMessage = Message.NOT_UNIQUE_LOGIN;
-        var user = new User(0, "name111", "login1", "123456");
+        var user = new User(0, "name111", "login1", "123456", "UTC");
         when(userService.save(user)).thenReturn(Optional.empty());
 
         var model = new ConcurrentModel();
@@ -125,7 +126,7 @@ class UserControllerTest {
     @Test
     public void whenRequestToLoginWithInCorrectDataThenErrorPageWithMessage() {
         var expectedErrorMessage = Message.LOGIN_PASSWORD_INCORRECT;
-        var user = new User(0, "name", "login", "password");
+        var user = new User(0, "name", "login", "password", "UTC");
         var session = mock(HttpSession.class);
         when(userService.findByLoginAndPassword(any(String.class), any(String.class)))
                 .thenReturn(Optional.empty());
