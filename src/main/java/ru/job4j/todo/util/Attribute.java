@@ -1,7 +1,7 @@
 package ru.job4j.todo.util;
 
 /**
- * Util class Attribute containing attributes used in project.
+ * Util class Attribute contains attributes used in project.
  * @author Lenar Sharipov
  * @version 1.0
  */

@@ -1,7 +1,7 @@
 package ru.job4j.todo.util;
 
 /**
- * Util class CategoryQuery containing all Category queries used in project.
+ * Util class CategoryQuery contains all Category queries used in project.
  * @author Lenar Sharipov
  * @version 1.0
  */

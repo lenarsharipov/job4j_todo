@@ -1,7 +1,7 @@
 package ru.job4j.todo.util;
 
 /**
- * Util class Query containing all Task queries used in project.
+ * Util class Query contains all Task queries used in project.
  * @author Lenar Sharipov
  * @version 1.0
  */

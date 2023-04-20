@@ -1,7 +1,7 @@
 package ru.job4j.todo.util;
 
 /**
- * Util class Page containing page-addresses used in project.
+ * Util class Page contains page-addresses used in project.
  * @author Lenar Sharipov
  * @version 1.0
  */

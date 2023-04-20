@@ -1,7 +1,7 @@
 package ru.job4j.todo.util;
 
 /**
- * Util class Entry containing all entries used in project.
+ * Util class Entry contains all entries used in project.
  * @author Lenar Sharipov
  * @version 1.0
  */

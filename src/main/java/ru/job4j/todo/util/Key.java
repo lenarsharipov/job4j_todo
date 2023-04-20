@@ -1,7 +1,7 @@
 package ru.job4j.todo.util;
 
 /**
- * Util class Key containing all keys used in project.
+ * Util class Key contains all keys used in project.
  * @author Lenar Sharipov
  * @version 1.0
  */

@@ -1,7 +1,7 @@
 package ru.job4j.todo.util;
 
 /**
- * Util class PriorityQuery containing all Priority queries used in project.
+ * Util class PriorityQuery contains all Priority queries used in project.
  * @author Lenar Sharipov
  * @version 1.0
  */

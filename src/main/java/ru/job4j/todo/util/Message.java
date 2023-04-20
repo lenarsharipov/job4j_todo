@@ -1,7 +1,7 @@
 package ru.job4j.todo.util;
 
 /**
- * Util class Message containing all messages used in project.
+ * Util class Message contains all messages used in project.
  * @author Lenar Sharipov
  * @version 1.0
  */
