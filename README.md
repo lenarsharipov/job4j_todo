@@ -1,11 +1,10 @@
-## Проект "Приложение TODO LIST - Список заданий"
+## "TODO LIST" PROJECT
 
-Web-приложение "TODO LIST - Список заданий".
-Позволяет добавлять, показывать, редактировать, удалять задания.
-В таблице отображается имя, дата создания и состояние (выполнено или нет).
+TODO LIST WEB APP allows add new task, show existing tasks, newly added tasks, completed tasks, edit task, delete tasks.
+Each task can be edited by the creator User. Task status can be converted from "In progress" to "Completed".
 
 ____________________________________________
-<h3>Стек технологий:</h3>
+<h3>Stack:</h3>
 <ul>
     <li>Java 17</li>
     <li>Postgresql 14</li>
@@ -26,61 +25,61 @@ ____________________________________________
 </ul>
 
 ____________________________________________
-<h3>Окружение:</h3>
+<h3>Requirements:</h3>
 Java 17, Maven 3.8.7, Postgresql 14
 
 ____________________________________________
-<h3>Запуск проекта:</h3>
+<h3>Project launching:</h3>
 <ol>
-    <li>Создать базу данных <b>todo</b>. Пользователь <b>postgres</b> c паролем <b>password</b>:</li>
+    <li>Create <b>todo</b> database. User - <b>postgres</b>, password - <b>password</b>:</li>
     <pre>create database todo;</pre>
-    <li>Скачать zip-архив программы:</li>
+    <li>Download zip-archive:</li>
     <pre><img src="/src/main/resources/static/img/readme/screenshots/zip_archive_git.png" title="Download Zip-archive"/></pre>
-    <li>Распакуйте архив, откройте в качестве проекта папку в <b>Intellij Idea</b></li>
-    <li>Во вкладке <b>Maven</b> запустите поочередно команды <b>clean, test</b></li>
-    <li>Откройте класс <b>Main.class</b> и запустите его.</li>
-    <li>В адресной строке браузера введите <b>localhost:8080</b> либо <b>localhost:8080/index</b></li>
+    <li>Unzip archive, open folder as a project in <b>Intellij Idea</b></li>
+    <li>In <b>Maven</b> tab, start <b>clean, test</b> commands.</li>
+    <li>Open <b>Main.class</b> and run main method.</li>
+    <li>To start app in browser write down in tab <b>localhost:8080</b> or <b>localhost:8080/index</b></li>
 </ol>
 
 ____________________________________________
-<h3>Покрытие тестами:</h3>
+<h3>Code coverage:</h3>
 <img src="/src/main/resources/static/img/readme/screenshots/jacoco.png" title="Jacoco"/>
 
 ____________________________________________
-<h3>Взаимодействие с приложением:</h3>
-<p>Главная страница</p>
+<h3>Screenshots:</h3>
+<p>Home</p>
 <img src="/src/main/resources/static/img/readme/screenshots/home.png" title="Home page"/>
 <br>
-<p>Все задачи</p>
+<p>Show all tasks</p>
 <img src="/src/main/resources/static/img/readme/screenshots/all_tasks.png" title="All tasks page"/>
 <br>
-<p>Выполненные задачи</p>
+<p>Show completed tasks</p>
 <img src="/src/main/resources/static/img/readme/screenshots/completed_tasks.png" title="Completed tasks page"/>
 <br>
-<p>Новые задачи</p>
+<p>Show new tasks</p>
 <img src="/src/main/resources/static/img/readme/screenshots/new_tasks.png" title="New tasks page"/>
 <br>
-<p>Создать задачу</p>
+<p>Add new task</p>
 <img src="/src/main/resources/static/img/readme/screenshots/add_task.png" title="Add new task page"/>
 <br>
-<p>Детальная страница задачи</p>
+<p>Task info page</p>
 <img src="/src/main/resources/static/img/readme/screenshots/task_detailed_info.png" title="Task info"/>
 <br>
-<p>Отредактировать задачу</p>
+<p>Edit task page</p>
 <img src="/src/main/resources/static/img/readme/screenshots/task_edit.png" title="Task edit page"/>
 <br>
-<p>Страница аутентификации</p>
+<p>Login page</p>
 <img src="/src/main/resources/static/img/readme/screenshots/login_page.png" title="Login page"/>
 <br>
-<p>Пользователь аутентифицирован</p>
+<p>User logged in</p>
 <img src="/src/main/resources/static/img/readme/screenshots/loggedin.png" title="User logged in"/>
 <br>
-<p>Ошибка</p>
+<p>Error page</p>
 <img src="/src/main/resources/static/img/readme/screenshots/login_error.png" title="Login error"/>
 <br>
 
 ____________________________________________
-<h3>Контакты:</h3>
+<h3>Contacts:</h3>
 <ul>
     <li><a href="mailto:lenarsharipov@gmail.com">lenarsharipov@gmail.com</a></li>
     <li><a href="https://t.me/LenarSharipov">telegram</a></li>
