@@ -31,22 +31,16 @@ import static org.mockito.Mockito.*;
 class TaskControllerTest {
     private TaskController taskController;
     private TaskService taskService;
-    private PriorityService priorityService;
-    private CategoryService categoryService;
     private User admin;
     private Priority urgently;
-    private Priority normal;
     private List<Task> tasks;
     private List<Category> categories;
 
-    /**
-     * Инициализировать taskService, taskController, списка задач tasks перед каждым тестом.
-     */
     @BeforeEach
     void setUp() {
         taskService = mock(TaskService.class);
-        priorityService = mock(PriorityService.class);
-        categoryService = mock(CategoryService.class);
+        PriorityService priorityService = mock(PriorityService.class);
+        CategoryService categoryService = mock(CategoryService.class);
         taskController = new TaskController(taskService, priorityService, categoryService);
 
         var oldDate = LocalDateTime.of(
@@ -65,7 +59,7 @@ class TaskControllerTest {
         urgently.setName("urgently");
         urgently.setPosition(1);
         urgently.setPosition(1);
-        normal = new Priority();
+        Priority normal = new Priority();
         normal.setId(2);
         normal.setName("normal");
         normal.setPosition(2);
@@ -78,7 +72,7 @@ class TaskControllerTest {
 
     /**
      * Mock test getAll().
-     * Вернуть страницу со всеми задачами сортированными по возрастанию по ID.
+     * Get list of all persisted Tasks Ordered by ID.
      */
     @Test
     void whenRequestTaskListPageThenGetPageWithTasksOrderedByIdAsc() {
@@ -97,7 +91,7 @@ class TaskControllerTest {
 
     /**
      * Mock-test getCompleted().
-     * Вернуть страницу со всеми выполненными задачами сортированными по возрастанию по ID.
+     * Get list of all completed Tasks Ordered by ID.
      */
     @Test
     void whenRequestCompletedTaskListThenGetPageWithTasksOrderedByIdAsc() {
@@ -116,7 +110,7 @@ class TaskControllerTest {
 
     /**
      * Mock-test getNew().
-     * Вернуть страницу со всеми новыми задачами сортированными по возрастанию по ID.
+     * Get list of all persisted new Tasks Ordered by ID.
      */
     @Test
     void whenRequestNewTaskListThenGetPageWithNewTasksOrderedByIdAsc() {
@@ -135,7 +129,7 @@ class TaskControllerTest {
 
     /**
      * Mock-test getCreationPage().
-     * Вернуть страницу создания новой задачи.
+     * Get new Task creation page.
      */
     @Test
     void whenRequestTaskCreationLPageThenGetIt() {
@@ -149,7 +143,7 @@ class TaskControllerTest {
 
     /**
      * Mock-test create().
-     * Вернуть созданную задачу и перейти на страницу задач.
+     * Create a new Task and get redirected to tasks page.
      */
     @Test
     void whenSaveTaskThenSameDataAndRedirectToTasksPage() {
@@ -169,7 +163,7 @@ class TaskControllerTest {
 
     /**
      * Mock-test getById().
-     * Вернуть страницу искомой задачи.
+     * Get page of searched by id Task.
      */
     @Test
     void whenRequestTaskByIdThenGetTaskPage() {
@@ -188,7 +182,7 @@ class TaskControllerTest {
 
     /**
      * Mock-test getById().
-     * Вернуть страницу об ошибке, если задача по ID не найдена.
+     * Get 404 page with error message if Task not found by ID.
      */
     @Test
     void whenRequestTaskByIllegalIdThenGetErrorPageWithMessage() {
@@ -207,7 +201,7 @@ class TaskControllerTest {
 
     /**
      * Mock-test delete().
-     * Удалить задачу по ID и вернуть страницу tasks.
+     * Delete Task by ID then get tasks page.
      */
     @Test
     void whenDeleteTaskByIdThenGetTrueAndTasksPage() {
@@ -223,7 +217,7 @@ class TaskControllerTest {
 
     /**
      * Mock-test delete().
-     * Вернуть страницу с описанием ошибки, при ошибке удаления задачи.
+     * Get 404 page with error message if Task cannot be deleted.
      */
     @Test
     void whenDeleteByIllegalIdThenGetFalseAndErrorPageWithMessage() {
@@ -242,7 +236,7 @@ class TaskControllerTest {
 
     /**
      * Mock-test getEditPage().
-     * Вернуть страницу редактирования задачи.
+     * Get Task edit page.
      */
     @Test
     void whenRequestEditPageThenGetPage() {
@@ -258,7 +252,7 @@ class TaskControllerTest {
 
     /**
      * Mock-test getEditPage().
-     * Вернуть страницу с указанием ошибки, в случае, если искомая задача не найдена.
+     * Get 404 page with error message if Task cannot be found by ID.
      */
     @Test
     void whenRequestEditPageOfNotExistingTaskThenGetErrorPageWithMessage() {
@@ -277,7 +271,7 @@ class TaskControllerTest {
 
     /**
      * Mock-test update().
-     * Вернуть страницу tasks, при успешном обновлении задачи.
+     * Get tasks page upon successful Task update.
      */
     @Test
     void whenUpdateTaskThenGetTasksPage() {
@@ -298,7 +292,7 @@ class TaskControllerTest {
 
     /**
      * Mock-test update().
-     * Вернуть страницу об ошибке, в случае, если задача не обновлена.
+     * Get 404 page with error message if Task cannot be updated.
      * */
     @Test
     void whenUpdateNotExistingTaskThenGetErrorPageWithMessage() {
@@ -318,7 +312,7 @@ class TaskControllerTest {
 
     /**
      * Mock-test updateStatus().
-     * Вернуть страницу tasks, при успешном обновлении статуса задачи с "В процессе" на "Выполнено.
+     * Get tasks page upon successful status update of Task.
      */
     @Test
     void whenUpdateTaskStatusThenGetTasksPage() {
@@ -335,7 +329,7 @@ class TaskControllerTest {
 
     /**
      * Mock-test update().
-     * Вернуть страницу об ошибке, в случае, если статус задачи не обновлен.
+     * Get 404 page with error message if Task status cannot be updated.
      */
     @Test
     void whenUpdateNotExistingTaskStatusThenGetErrorPageWithMessage1() {

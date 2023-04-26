@@ -38,7 +38,7 @@ public class UserStore {
     public Optional<User> save(User user) {
         Optional<User> result = Optional.empty();
         try {
-            crudRepository.run(session -> session.persist(user));
+            crudRepository.run(session -> session.save(user));
             result = Optional.of(user);
         } catch (Exception exception) {
             LOG.error(Message.USER_NOT_SAVED, exception);

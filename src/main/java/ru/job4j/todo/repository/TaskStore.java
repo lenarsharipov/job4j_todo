@@ -42,7 +42,7 @@ public class TaskStore {
     public Optional<Task> save(Task task) {
         Optional<Task> result = Optional.empty();
         try {
-            crudRepository.run(session -> session.merge(task));
+            crudRepository.run(session -> session.save(task));
             result = Optional.of(task);
         } catch (Exception exception) {
             LOG.error(Message.TASK_NOT_SAVED, exception);
