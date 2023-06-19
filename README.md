@@ -34,7 +34,6 @@ ____________________________________________
     <li>Create <b>todo</b> database. User - <b>postgres</b>, password - <b>password</b>:</li>
     <pre>create database todo;</pre>
     <li>Download zip-archive:</li>
-    <pre><img src="/src/main/resources/static/img/readme/screenshots/zip_archive_git.png" title="Download Zip-archive"/></pre>
     <li>Unzip archive, open folder as a project in <b>Intellij Idea</b></li>
     <li>In <b>Maven</b> tab, start <b>clean, test</b> commands.</li>
     <li>Open <b>Main.class</b> and run main method.</li>
