@@ -47,9 +47,6 @@ ____________________________________________
 
 ____________________________________________
 <h3>Screenshots:</h3>
-<p>Home</p>
-<img src="/src/main/resources/static/img/readme/screenshots/home.png" title="Home page"/>
-<br>
 <p>Show all tasks</p>
 <img src="/src/main/resources/static/img/readme/screenshots/all_tasks.png" title="All tasks page"/>
 <br>
